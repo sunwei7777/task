@@ -1,0 +1,26 @@
+workflows:
+  ios-build:
+    name: iOS Build
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: master
+          include: true
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Build iOS
+        script: flutter build ipa --release
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - 524146970@qq.com
