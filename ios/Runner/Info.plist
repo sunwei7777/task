@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Flutter Application 1</string>
+	<string>Task</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>为了实时获取图片信息提交汇报数据</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>为了方便在汇报时提交相关图片信息</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>为了在提交汇报时调用摄像头保存图片</string>
 </dict>
 </plist>

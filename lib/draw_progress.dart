@@ -77,16 +77,29 @@ class _DrawProgress extends CustomPainter {
     final totalAngleRad = math.pi; // 180°
     final startAngle = -math.pi; // 从顶部开始
 
+    final paint = Paint()
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final hasData = completed > 0 || inProgress > 0 || delayed > 0;
+    if (!hasData) {
+      paint.color = Colors.grey[300]!;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        totalAngleRad,
+        false,
+        paint,
+      );
+      return;
+    }
+
     double getAngle(double value) => (value / total) * totalAngleRad;
 
     final completedAngle = getAngle(completed);
     final inProgressAngle = getAngle(inProgress);
     final delayedAngle = getAngle(delayed);
-
-    final paint = Paint()
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
 
     double currentAngle = startAngle;
 

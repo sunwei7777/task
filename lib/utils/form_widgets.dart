@@ -49,21 +49,41 @@ class FormWidgets {
                         text: '  整体',
                         style: TextStyle(
                           color: Color(0xFF1BA17D),
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                       ),
                   ],
                 ),
               ),
             ),
-            Expanded(
-              child: Text(
-                value,
-                textAlign: TextAlign.right,
-                style: const TextStyle(color: Colors.black54, fontSize: 12),
-              ),
-            ),
-            if (value != '自动生成')
+            label == '关联项目/订单'
+                ? Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 4.0,
+                      horizontal: 12.0,
+                    ),
+                    color: Color(0xFFF1F6FF),
+                    child: Text(
+                      value.isNotEmpty ? value : '请选择',
+                      style: TextStyle(
+                        color: value.isNotEmpty
+                            ? Colors.black87
+                            : Colors.black38,
+                        fontSize: 13,
+                      ),
+                    ),
+                  )
+                : Expanded(
+                    child: Text(
+                      value,
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+            if (label != '单据编号' && label != '申请类型' && label != '汇报人')
               Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
           ],
         ),
@@ -123,8 +143,8 @@ class FormWidgets {
               obscureText: obscureText,
               decoration: InputDecoration(
                 hintText: '请输入$label',
-                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 12),
-                contentPadding: EdgeInsets.only(left: 24, bottom: 16),
+                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                contentPadding: EdgeInsets.only(left: 24, bottom: 12),
                 border: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey[300]!, width: 0.5),
                 ),
@@ -145,19 +165,29 @@ class FormWidgets {
   //选择日期范围
   static Widget showDateTime(
     BuildContext context,
-    DateTime? initialDateTime,
-    bool isStartDate,
-    Function(DateTime selectedDateTime) onPressed,
-  ) {
+    String label,
+    DateTime? value, {
+    required VoidCallback? Function(DateTime selectedDateTime) onPressed,
+  }) {
     return GestureDetector(
-      onTap: () => {},
+      onTap: () => _showCupertinoDateTimePicker(
+        context,
+        value,
+        isStartDate: label == '开始时间',
+        onPressed: (selectedDateTime) {
+          onPressed(selectedDateTime);
+          return null;
+        },
+      ),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey[300]!),
           borderRadius: BorderRadius.circular(4),
         ),
-        child: Center(child: Text('结束时间')),
+        child: Center(
+          child: Text(value != null ? _formatChineseDateTime(value) : label),
+        ),
       ),
     );
   }
@@ -169,6 +199,7 @@ class FormWidgets {
     bool required,
     DateTime? value,
     IconData icon, {
+    bool timeOnly = false,
     required VoidCallback? Function(DateTime selectedDateTime) onPressed,
   }) {
     return Container(
@@ -207,6 +238,7 @@ class FormWidgets {
                       context,
                       value,
                       isStartDate: label == '计划开始时间',
+                      timeOnly: timeOnly,
                       onPressed: (selectedDateTime) {
                         onPressed(selectedDateTime);
                         return null;
@@ -214,8 +246,12 @@ class FormWidgets {
                     );
                   },
                   child: Text(
-                    value != null ? _formatChineseDateTime(value) : '请设置',
-                    style: const TextStyle(color: Colors.black54, fontSize: 12),
+                    value != null
+                        ? (timeOnly
+                              ? _formatTimeOnly(value)
+                              : _formatChineseDateTime(value))
+                        : '请设置',
+                    style: const TextStyle(color: Colors.black54, fontSize: 14),
                   ),
                 ),
                 SizedBox(width: 4),
@@ -232,6 +268,7 @@ class FormWidgets {
     BuildContext context,
     DateTime? value, {
     bool isStartDate = true,
+    bool timeOnly = false,
     required VoidCallback? Function(DateTime selectedDateTime) onPressed,
   }) async {
     DateTime now = DateTime.now();
@@ -242,12 +279,19 @@ class FormWidgets {
       builder: (BuildContext builder) {
         return Container(
           height: 300,
-          color: Colors.white,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
               // 标题栏
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
                   border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
                 ),
@@ -264,7 +308,9 @@ class FormWidgets {
                       },
                     ),
                     Text(
-                      isStartDate ? '选择开始时间' : '选择结束时间',
+                      isStartDate
+                          ? (timeOnly ? '选择开始时间' : '选择开始时间')
+                          : (timeOnly ? '选择结束时间' : '选择结束时间'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -287,6 +333,7 @@ class FormWidgets {
                 child: _buildChineseDateTimePicker(
                   selectedDateTime!,
                   isStartDate: isStartDate,
+                  timeOnly: timeOnly,
                 ),
               ),
               // 中文格式显示当前选择
@@ -352,157 +399,287 @@ class FormWidgets {
     //   displayHour = hour - 12;
     // }
 
-    return '$dateStr $displayHour:${minute.toString().padLeft(2, '0')}';
+    return '$dateStr $displayHour:${minute.toString().padLeft(2, '0')}'; //:${dateTime.second.toString().padLeft(2, '0')}
+  }
+
+  // 仅时间格式化
+  static String _formatTimeOnly(DateTime dateTime) {
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
   }
 
   // 自定义中文日期时间选择器
   static Widget _buildChineseDateTimePicker(
     DateTime initialDateTime, {
     bool isStartDate = true,
+    bool timeOnly = false,
   }) {
-    // DateTime now = DateTime.now();
     DateTime tempDateTime = initialDateTime;
 
-    // 确保初始日期不早于最小日期
-    // if (isStartDate && tempDateTime.isBefore(now)) {
-    //   tempDateTime = now;
-    // } else if (!isStartDate &&
-    //     startDate != null &&
-    //     tempDateTime.isBefore(startDate!)) {
-    //   tempDateTime = startDate!;
-    // }
-
-    return Row(
-      children: [
-        // 年份选择器
-        Expanded(
-          flex: 2,
-          child: CupertinoPicker(
-            scrollController: FixedExtentScrollController(
-              initialItem: tempDateTime.year - 2020,
-            ),
-            itemExtent: 40,
-            onSelectedItemChanged: (int index) {
-              tempDateTime = DateTime(
-                2020 + index,
-                tempDateTime.month,
-                tempDateTime.day,
-                tempDateTime.hour,
-                tempDateTime.minute,
-              );
-              selectedDateTime = tempDateTime;
-            },
-            children: List.generate(30, (index) {
-              return Center(
-                child: Text('${2020 + index}年', style: TextStyle(fontSize: 16)),
-              );
-            }),
-          ),
-        ),
-
-        // 月份选择器
-        Expanded(
-          child: CupertinoPicker(
-            scrollController: FixedExtentScrollController(
-              initialItem: tempDateTime.month - 1,
-            ),
-            itemExtent: 40,
-            onSelectedItemChanged: (int index) {
-              tempDateTime = DateTime(
-                tempDateTime.year,
-                index + 1,
-                tempDateTime.day,
-                tempDateTime.hour,
-                tempDateTime.minute,
-              );
-              selectedDateTime = tempDateTime;
-            },
-            children: List.generate(12, (index) {
-              return Center(
-                child: Text('${index + 1}月', style: TextStyle(fontSize: 16)),
-              );
-            }),
-          ),
-        ),
-
-        // 日期选择器
-        Expanded(
-          child: CupertinoPicker(
-            scrollController: FixedExtentScrollController(
-              initialItem: tempDateTime.day - 1,
-            ),
-            itemExtent: 40,
-            onSelectedItemChanged: (int index) {
-              tempDateTime = DateTime(
-                tempDateTime.year,
-                tempDateTime.month,
-                index + 1,
-                tempDateTime.hour,
-                tempDateTime.minute,
-              );
-              selectedDateTime = tempDateTime;
-            },
-            children: List.generate(
-              _getDaysInMonth(tempDateTime.year, tempDateTime.month),
-              (index) {
-                return Center(
-                  child: Text('${index + 1}日', style: TextStyle(fontSize: 16)),
+    if (timeOnly) {
+      return Row(
+        children: [
+          // 小时选择器
+          Expanded(
+            child: CupertinoPicker(
+              scrollController: FixedExtentScrollController(
+                initialItem: tempDateTime.hour,
+              ),
+              itemExtent: 40,
+              onSelectedItemChanged: (int index) {
+                tempDateTime = DateTime(
+                  tempDateTime.year,
+                  tempDateTime.month,
+                  tempDateTime.day,
+                  index,
+                  tempDateTime.minute,
+                  tempDateTime.second,
                 );
+                selectedDateTime = tempDateTime;
               },
+              children: List.generate(24, (index) {
+                return Center(
+                  child: Text('$index时', style: TextStyle(fontSize: 20)),
+                );
+              }),
             ),
           ),
-        ),
+          // 分钟选择器
+          Expanded(
+            child: CupertinoPicker(
+              scrollController: FixedExtentScrollController(
+                initialItem: tempDateTime.minute,
+              ),
+              itemExtent: 40,
+              onSelectedItemChanged: (int index) {
+                tempDateTime = DateTime(
+                  tempDateTime.year,
+                  tempDateTime.month,
+                  tempDateTime.day,
+                  tempDateTime.hour,
+                  index,
+                  tempDateTime.second,
+                );
+                selectedDateTime = tempDateTime;
+              },
+              children: List.generate(60, (index) {
+                return Center(
+                  child: Text(
+                    '${index.toString().padLeft(2, '0')}分',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                );
+              }),
+            ),
+          ),
+          // 秒选择器
+          Expanded(
+            child: CupertinoPicker(
+              scrollController: FixedExtentScrollController(
+                initialItem: tempDateTime.second,
+              ),
+              itemExtent: 40,
+              onSelectedItemChanged: (int index) {
+                tempDateTime = DateTime(
+                  tempDateTime.year,
+                  tempDateTime.month,
+                  tempDateTime.day,
+                  tempDateTime.hour,
+                  tempDateTime.minute,
+                  index,
+                );
+                selectedDateTime = tempDateTime;
+              },
+              children: List.generate(60, (index) {
+                return Center(
+                  child: Text(
+                    '${index.toString().padLeft(2, '0')}秒',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      );
+    }
 
-        // 小时选择器
-        Expanded(
-          child: CupertinoPicker(
-            scrollController: FixedExtentScrollController(
-              initialItem: tempDateTime.hour,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          // 年份选择器
+          Expanded(
+            flex: 1,
+            child: CupertinoPicker(
+              scrollController: FixedExtentScrollController(
+                initialItem: tempDateTime.year - 2020,
+              ),
+              itemExtent: 40,
+              onSelectedItemChanged: (int index) {
+                tempDateTime = DateTime(
+                  2020 + index,
+                  tempDateTime.month,
+                  tempDateTime.day,
+                  tempDateTime.hour,
+                  tempDateTime.minute,
+                  tempDateTime.second,
+                );
+                selectedDateTime = tempDateTime;
+              },
+              children: List.generate(30, (index) {
+                return Center(
+                  child: Text(
+                    '${2020 + index}年',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                );
+              }),
             ),
-            itemExtent: 40,
-            onSelectedItemChanged: (int index) {
-              tempDateTime = DateTime(
-                tempDateTime.year,
-                tempDateTime.month,
-                tempDateTime.day,
-                index,
-                tempDateTime.minute,
-              );
-              selectedDateTime = tempDateTime;
-            },
-            children: List.generate(24, (index) {
-              return Center(
-                child: Text('$index时', style: TextStyle(fontSize: 16)),
-              );
-            }),
           ),
-        ),
 
-        // 分钟选择器
-        Expanded(
-          child: CupertinoPicker(
-            scrollController: FixedExtentScrollController(
-              initialItem: (tempDateTime.minute / 5).floor(),
+          // 月份选择器
+          Expanded(
+            child: CupertinoPicker(
+              scrollController: FixedExtentScrollController(
+                initialItem: tempDateTime.month - 1,
+              ),
+              itemExtent: 40,
+              onSelectedItemChanged: (int index) {
+                tempDateTime = DateTime(
+                  tempDateTime.year,
+                  index + 1,
+                  tempDateTime.day,
+                  tempDateTime.hour,
+                  tempDateTime.minute,
+                  tempDateTime.second,
+                );
+                selectedDateTime = tempDateTime;
+              },
+              children: List.generate(12, (index) {
+                return Center(
+                  child: Text('${index + 1}月', style: TextStyle(fontSize: 14)),
+                );
+              }),
             ),
-            itemExtent: 40,
-            onSelectedItemChanged: (int index) {
-              tempDateTime = DateTime(
-                tempDateTime.year,
-                tempDateTime.month,
-                tempDateTime.day,
-                tempDateTime.hour,
-                index * 5,
-              );
-              selectedDateTime = tempDateTime;
-            },
-            children: List.generate(12, (index) {
-              return Center(
-                child: Text('${index * 5}分', style: TextStyle(fontSize: 16)),
-              );
-            }),
           ),
-        ),
-      ],
+
+          // 日期选择器
+          Expanded(
+            child: CupertinoPicker(
+              scrollController: FixedExtentScrollController(
+                initialItem: tempDateTime.day - 1,
+              ),
+              itemExtent: 40,
+              onSelectedItemChanged: (int index) {
+                tempDateTime = DateTime(
+                  tempDateTime.year,
+                  tempDateTime.month,
+                  index + 1,
+                  tempDateTime.hour,
+                  tempDateTime.minute,
+                  tempDateTime.second,
+                );
+                selectedDateTime = tempDateTime;
+              },
+              children: List.generate(
+                _getDaysInMonth(tempDateTime.year, tempDateTime.month),
+                (index) {
+                  return Center(
+                    child: Text(
+                      '${index + 1}日',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+
+          // 小时选择器
+          Expanded(
+            child: CupertinoPicker(
+              scrollController: FixedExtentScrollController(
+                initialItem: tempDateTime.hour,
+              ),
+              itemExtent: 40,
+              onSelectedItemChanged: (int index) {
+                tempDateTime = DateTime(
+                  tempDateTime.year,
+                  tempDateTime.month,
+                  tempDateTime.day,
+                  index,
+                  tempDateTime.minute,
+                  tempDateTime.second,
+                );
+                selectedDateTime = tempDateTime;
+              },
+              children: List.generate(24, (index) {
+                return Center(
+                  child: Text('$index时', style: TextStyle(fontSize: 14)),
+                );
+              }),
+            ),
+          ),
+
+          // 分钟选择器
+          Expanded(
+            child: CupertinoPicker(
+              scrollController: FixedExtentScrollController(
+                initialItem: tempDateTime.minute,
+              ),
+              itemExtent: 40,
+              onSelectedItemChanged: (int index) {
+                tempDateTime = DateTime(
+                  tempDateTime.year,
+                  tempDateTime.month,
+                  tempDateTime.day,
+                  tempDateTime.hour,
+                  index,
+                  tempDateTime.second,
+                );
+                selectedDateTime = tempDateTime;
+              },
+              children: List.generate(60, (index) {
+                return Center(
+                  child: Text(
+                    '${index.toString().padLeft(2, '0')}分',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                );
+              }),
+            ),
+          ),
+
+          // 秒选择器
+          // Expanded(
+          //   child: CupertinoPicker(
+          //     scrollController: FixedExtentScrollController(
+          //       initialItem: tempDateTime.second,
+          //     ),
+          //     itemExtent: 40,
+          //     onSelectedItemChanged: (int index) {
+          //       tempDateTime = DateTime(
+          //         tempDateTime.year,
+          //         tempDateTime.month,
+          //         tempDateTime.day,
+          //         tempDateTime.hour,
+          //         tempDateTime.minute,
+          //         index,
+          //       );
+          //       selectedDateTime = tempDateTime;
+          //     },
+          //     children: List.generate(60, (index) {
+          //       return Center(
+          //         child: Text(
+          //           '${index.toString().padLeft(2, '0')}秒',
+          //           style: TextStyle(fontSize: 14),
+          //         ),
+          //       );
+          //     }),
+          //   ),
+          // ),
+        ],
+      ),
     );
   }
 

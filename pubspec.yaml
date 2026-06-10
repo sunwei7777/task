@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.13
 
 environment:
   sdk: ^3.10.8
@@ -34,9 +34,50 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  
+
   # 国际化支持
-  intl: ^0.18.1
+  intl: 0.20.2
+  flutter_localizations:
+    sdk: flutter
+
+  # 本地存储
+  shared_preferences: ^2.2.2
+
+  # 获取应用信息
+  package_info_plus: ^4.0.2
+
+  # HTTP请求
+  dio: ^5.4.0
+
+  # 路径和文件操作
+  path_provider: ^2.1.2
+  open_filex: ^4.3.2
+
+  # 摄像头拍照/录像
+  image_picker: ^1.1.2
+
+  # 文件选择（图片/视频）
+  file_picker: ^8.0.0
+
+  # 微信风格多选图片/视频
+  wechat_assets_picker: ^9.0.0
+  extended_image: ^8.0.0
+
+  # 权限管理
+  permission_handler: ^11.0.1
+  
+  # 录音功能
+  flutter_sound: ^9.30.0
+
+  # 视频播放
+  video_player: ^2.9.5
+
+  # 状态管理
+  get: ^4.6.6
+
+  # WebSocket
+  web_socket_channel: ^3.0.1
+  vibration: ^3.1.8
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +89,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.3
+
+dependency_overrides:
+  path_provider_android: 2.2.22
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -89,3 +134,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "lib/assets/icon.png"

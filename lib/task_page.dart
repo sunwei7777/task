@@ -1,16 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/search_page.dart';
-import 'package:flutter_application_1/select_task.dart';
+import 'package:flutter_application_1/store/task_controller.dart';
+import 'package:flutter_application_1/task/select_task.dart';
+import 'package:get/get.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({Key? key}) : super(key: key);
 
   @override
-  _TaskPageState createState() => _TaskPageState();
+  TaskPageState createState() => TaskPageState();
 }
 
-class _TaskPageState extends State<TaskPage> {
+class TaskPageState extends State<TaskPage> {
+  void refresh() {
+    _taskController.fetchAllTaskTypeCounts(startTime: '', endTime: '');
+  }
+
   int _currentTab = 0;
+  final TaskController _taskController = Get.find<TaskController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _taskController.fetchAllTaskTypeCounts(
+      startTime: '', //fmtDate(_dateStart),
+      endTime: '', //fmtDate(_dateEnd),
+    );
+  }
+
+  final DateTime _dateEnd = DateTime.now();
+  DateTime get _dateStart => _dateEnd.subtract(Duration(days: 7));
+  String get _dateRange =>
+      '${_dateStart.month.toString().padLeft(2, '0')}-${_dateStart.day.toString().padLeft(2, '0')}~${_dateEnd.month.toString().padLeft(2, '0')}-${_dateEnd.day.toString().padLeft(2, '0')}';
+
+  String fmtDate(DateTime dt) =>
+      '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +43,22 @@ class _TaskPageState extends State<TaskPage> {
         scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        title: Stack(
+          alignment: Alignment.center,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: Image(image: AssetImage('lib/assets/logo1.png')),
+                ClipOval(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Image(image: AssetImage('lib/assets/logo.png')),
+                  ),
                 ),
                 SizedBox(width: 4),
                 Text(
-                  '企业名称',
+                  'Task',
                   style: TextStyle(
                     color: Color(0xFF001111),
                     fontSize: 14,
@@ -42,23 +69,6 @@ class _TaskPageState extends State<TaskPage> {
               ],
             ),
             Text('任务', style: TextStyle(fontSize: 18, color: Colors.black)),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.notifications_none, color: Colors.black),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SearchPage()),
-                    );
-                  },
-                  icon: Icon(Icons.search, color: Colors.black),
-                ),
-              ],
-            ),
           ],
         ),
         bottom: PreferredSize(
@@ -137,63 +147,130 @@ class _TaskPageState extends State<TaskPage> {
               child: Column(
                 children: [
                   // 订单任务
-                  _buildTaskCard(
-                    title: '订单任务',
-                    color: Color(0xFF0073FF),
-                    stats: [
-                      {'title': '待处理', 'count': '25', 'color': Colors.black},
-                      {
-                        'title': '今日可开始',
-                        'count': '8',
-                        'color': Color(0xFF0073FF),
-                      },
-                      {'title': '已延期', 'count': '5', 'color': Colors.red},
-                      {'title': '即将延期', 'count': '3', 'color': Colors.orange},
-                    ],
-                    showAlert: true,
-                    alertText: '个任务已延期超过2天',
-                  ),
+                  Obx(() {
+                    final c = _taskController.taskTypeCounts[2];
+                    return _buildTaskCard(
+                      title: '订单任务',
+                      color: Color(0xFF0073FF),
+                      stats: [
+                        {
+                          'title': '待处理',
+                          'count': '${c?.pendingCount ?? 0}',
+                          'color': Colors.black,
+                        },
+                        {
+                          'title': '已超时',
+                          'count': '${c?.overtimeCount ?? 0}',
+                          'color': Colors.red,
+                        },
+                        {
+                          'title': '已完成',
+                          'count': '${c?.completedCount ?? 0}',
+                          'color': Color(0xFF0073FF),
+                        },
+                        {
+                          'title': '已取消',
+                          'count': '${c?.cancelledCount ?? 0}',
+                          'color': Colors.black.withOpacity(0.3),
+                        },
+                      ],
+                    );
+                  }),
                   SizedBox(height: 16),
 
                   // 项目任务
-                  _buildTaskCard(
-                    title: '项目任务',
-                    color: Color(0xFF91D5FF),
-                    stats: [
-                      {'title': '待处理', 'count': '25', 'color': Colors.black},
-                      {
-                        'title': '今日可开始',
-                        'count': '8',
-                        'color': Color(0xFF0073FF),
-                      },
-                      {'title': '已延期', 'count': '5', 'color': Colors.red},
-                      {'title': '即将延期', 'count': '3', 'color': Colors.orange},
-                    ],
-                  ),
+                  Obx(() {
+                    final c = _taskController.taskTypeCounts[1];
+                    return _buildTaskCard(
+                      title: '项目任务',
+                      color: Color(0xFF91D5FF),
+                      stats: [
+                        {
+                          'title': '待处理',
+                          'count': '${c?.pendingCount ?? 0}',
+                          'color': Colors.black,
+                        },
+                        {
+                          'title': '已超时',
+                          'count': '${c?.overtimeCount ?? 0}',
+                          'color': Colors.red,
+                        },
+                        {
+                          'title': '已完成',
+                          'count': '${c?.completedCount ?? 0}',
+                          'color': Color(0xFF0073FF),
+                        },
+                        {
+                          'title': '已取消',
+                          'count': '${c?.cancelledCount ?? 0}',
+                          'color': Colors.black.withOpacity(0.3),
+                        },
+                      ],
+                    );
+                  }),
+                  SizedBox(height: 16), // 为浮动按钮留出空间
+
+                  Obx(() {
+                    final c = _taskController.taskTypeCounts[9];
+                    return _buildTaskCard(
+                      title: '打样任务',
+                      color: Color(0xFFD4C2FE),
+                      stats: [
+                        {
+                          'title': '待处理',
+                          'count': '${c?.pendingCount ?? 0}',
+                          'color': Colors.black,
+                        },
+                        {
+                          'title': '已超时',
+                          'count': '${c?.overtimeCount ?? 0}',
+                          'color': Colors.red,
+                        },
+                        {
+                          'title': '已完成',
+                          'count': '${c?.completedCount ?? 0}',
+                          'color': Color(0xFF0073FF),
+                        },
+                        {
+                          'title': '已取消',
+                          'count': '${c?.cancelledCount ?? 0}',
+                          'color': Colors.black.withOpacity(0.3),
+                        },
+                      ],
+                    );
+                  }),
                   SizedBox(height: 16),
 
                   // 其他任务
-                  _buildTaskCard(
-                    title: '其他任务',
-                    color: Color(0xFF9DE2D0),
-                    stats: [
-                      {
-                        'title': '周期',
-                        'count': '2',
-                        'color': Colors.green,
-                        'badge': '超时',
-                      },
-                      {
-                        'title': '临时',
-                        'count': '4',
-                        'color': Colors.green,
-                        'badge': '超时',
-                      },
-                      {'title': '会议', 'count': '0', 'color': Colors.black},
-                      {'title': '其他', 'count': '0', 'color': Colors.black},
-                    ],
-                  ),
-                  SizedBox(height: 20), // 为浮动按钮留出空间
+                  Obx(() {
+                    final c = _taskController.otherTaskCounts.value;
+                    return _buildTaskCard(
+                      title: '其他任务',
+                      color: Color(0xFF9DE2D0),
+                      stats: [
+                        {
+                          'title': '周期',
+                          'count': '${c.periodic}',
+                          'color': Colors.black,
+                        },
+                        {
+                          'title': '临时',
+                          'count': '${c.temporary}',
+                          'color': Colors.black,
+                        },
+                        {
+                          'title': '会议',
+                          'count': '${c.meeting}',
+                          'color': Colors.black,
+                        },
+                        {
+                          'title': '外派',
+                          'count': '${c.dispatch}',
+                          'color': Colors.black,
+                        },
+                      ],
+                    );
+                  }),
                 ],
               ),
             ),
@@ -302,45 +379,49 @@ class _TaskPageState extends State<TaskPage> {
                         ),
                       ),
                       SizedBox(width: 12),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          // ignore: deprecated_member_use
-                          color: Colors.white.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              '最近7天',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: title == '订单任务'
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                            Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 16,
-                              color: title == '订单任务'
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        '11-09~11-16',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: title == '订单任务' ? Colors.white : Colors.black,
-                        ),
-                      ),
+                      // if (title == '其他任务')
+                      //   Container(
+                      //     padding: EdgeInsets.symmetric(
+                      //       horizontal: 8,
+                      //       vertical: 2,
+                      //     ),
+                      //     decoration: BoxDecoration(
+                      //       // ignore: deprecated_member_use
+                      //       color: Colors.white.withOpacity(0.3),
+                      //       borderRadius: BorderRadius.circular(4),
+                      //     ),
+                      //     child: Row(
+                      //       children: [
+                      //         Text(
+                      //           '最近7天',
+                      //           style: TextStyle(
+                      //             fontSize: 12,
+                      //             color: title == '订单任务'
+                      //                 ? Colors.white
+                      //                 : Colors.black,
+                      //           ),
+                      //         ),
+                      //         // Icon(
+                      //         //   Icons.keyboard_arrow_down,
+                      //         //   size: 16,
+                      //         //   color: title == '订单任务'
+                      //         //       ? Colors.white
+                      //         //       : Colors.black,
+                      //         // ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // if (title == '其他任务') SizedBox(width: 8),
+                      // if (title == '其他任务')
+                      //   Text(
+                      //     _dateRange,
+                      //     style: TextStyle(
+                      //       fontSize: 12,
+                      //       color: title == '订单任务'
+                      //           ? Colors.white
+                      //           : Colors.black,
+                      //     ),
+                      //   ),
                     ],
                   ),
                   Icon(

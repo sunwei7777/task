@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:flutter_application_1/store/message_controller.dart';
 
 class Tabbar extends StatefulWidget {
   final int currentIndex;
@@ -12,7 +14,6 @@ class Tabbar extends StatefulWidget {
 
 class _TabbarState extends State<Tabbar> {
   final int _taskCount = 0;
-  final int _messageCount = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -66,35 +67,39 @@ class _TabbarState extends State<Tabbar> {
             label: '任务',
           ),
           BottomNavigationBarItem(
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Icon(Icons.message),
-                // 消息提示
-                if (_messageCount > 0)
-                  Positioned(
-                    top: -4,
-                    right: -8,
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      constraints: BoxConstraints(minWidth: 16, minHeight: 16),
-                      child: Text(
-                        _messageCount > 99 ? '99' : _messageCount.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+            icon: Obx(() {
+              final count = Get.isRegistered<MessageController>()
+                  ? Get.find<MessageController>().totalUnreadCount.value
+                  : 0;
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(Icons.message),
+                  if (count > 0)
+                    Positioned(
+                      top: -4,
+                      right: -8,
+                      child: Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
                         ),
-                        textAlign: TextAlign.center,
+                        constraints: BoxConstraints(minWidth: 16, minHeight: 16),
+                        child: Text(
+                          count > 99 ? '99' : count.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            ),
+                ],
+              );
+            }),
             label: '消息',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
