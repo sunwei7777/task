@@ -7,6 +7,9 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      ios_signing:
+        distribution_type: development
+        bundle_identifier: com.example.flutterApplication1
     triggering:
       events:
         - push
@@ -16,8 +19,10 @@ workflows:
     scripts:
       - name: Get Flutter packages
         script: flutter pub get
+      - name: Install pods
+        script: cd ios && pod install
       - name: Build iOS
-        script: flutter build ipa --release
+        script: flutter build ipa --release --export-method development
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
