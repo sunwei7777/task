@@ -3,70 +3,56 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionHelper {
-  /// 检查相册权限，无权限时弹窗引导设置
+  /// 检查相册权限（仅 Android 需要，iOS 由插件自动处理）
   static Future<bool> ensurePhotoPermission(BuildContext context) async {
-    final status = await _photoStatus();
+    if (Platform.isIOS) return true;
+    final status = await Permission.storage.status;
     if (status.isGranted) return true;
     if (status.isPermanentlyDenied) {
-      _showDialog(context, '相册', '请在系统设置中开启相册访问权限，以便选择图片。');
+      _showDialog(context, '相册', '请在系统设置中开启存储权限，以便选择图片。');
       return false;
     }
-
-    final result = await _photoRequest();
+    final result = await Permission.storage.request();
     if (result.isGranted) return true;
     if (result.isPermanentlyDenied) {
-      _showDialog(context, '相册', '请在系统设置中开启相册访问权限，以便选择图片。');
+      _showDialog(context, '相册', '请在系统设置中开启存储权限，以便选择图片。');
     }
     return false;
   }
 
-  /// 检查相机权限，无权限时弹窗引导设置
+  /// 检查相机权限（仅 Android 需要，iOS 由插件自动处理）
   static Future<bool> ensureCameraPermission(BuildContext context) async {
+    if (Platform.isIOS) return true;
     final status = await Permission.camera.status;
     if (status.isGranted) return true;
     if (status.isPermanentlyDenied) {
-      _showDialog(context, '相机', '请在系统设置中开启相机权限，以便拍摄照片。');
+      _showDialog(context, '相机', '请在系统设置中开启相机权限。');
       return false;
     }
-
     final result = await Permission.camera.request();
     if (result.isGranted) return true;
     if (result.isPermanentlyDenied) {
-      _showDialog(context, '相机', '请在系统设置中开启相机权限，以便拍摄照片。');
+      _showDialog(context, '相机', '请在系统设置中开启相机权限。');
     }
     return false;
   }
 
-  /// 检查麦克风权限，无权限时弹窗引导设置
+  /// 检查麦克风权限（仅 Android 需要，iOS 由插件自动处理）
   static Future<bool> ensureMicrophonePermission(BuildContext context) async {
+    if (Platform.isIOS) return true;
     final status = await Permission.microphone.status;
     if (status.isGranted) return true;
     if (status.isPermanentlyDenied) {
-      _showDialog(context, '麦克风', '请在系统设置中开启麦克风权限，以便录制视频。');
+      _showDialog(context, '麦克风', '请在系统设置中开启麦克风权限。');
       return false;
     }
-
     final result = await Permission.microphone.request();
     if (result.isGranted) return true;
     if (result.isPermanentlyDenied) {
-      _showDialog(context, '麦克风', '请在系统设置中开启麦克风权限，以便录制视频。');
+      _showDialog(context, '麦克风', '请在系统设置中开启麦克风权限。');
     }
     return false;
   }
-
-  static Future<PermissionStatus> _photoStatus() async {
-    if (Platform.isIOS) return Permission.photos.status;
-    if (await _isAndroid13Plus()) return Permission.photos.status;
-    return Permission.storage.status;
-  }
-
-  static Future<PermissionStatus> _photoRequest() async {
-    if (Platform.isIOS || await _isAndroid13Plus())
-      return Permission.photos.request();
-    return Permission.storage.request();
-  }
-
-  static Future<bool> _isAndroid13Plus() async => Platform.isAndroid;
 
   static void _showDialog(
     BuildContext context,
