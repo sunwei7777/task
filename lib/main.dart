@@ -9,6 +9,7 @@ import 'package:flutter_application_1/store/task_controller.dart';
 import 'package:flutter_application_1/store/message_controller.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

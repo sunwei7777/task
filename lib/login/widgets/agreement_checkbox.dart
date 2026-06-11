@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../my/service_agreement_page.dart';
-import '../../my/privacy_policy_page.dart';
+import '../../utils/web_page.dart';
 
 /// 用户协议勾选框
 class AgreementCheckbox extends StatelessWidget {
@@ -24,7 +23,7 @@ class AgreementCheckbox extends StatelessWidget {
           child: Wrap(
             alignment: WrapAlignment.start,
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: -4, // 让文字紧凑排列
+            spacing: -4,
             children: [
               const Text(
                 '我已阅读并同意 ',
@@ -35,7 +34,10 @@ class AgreementCheckbox extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ServiceAgreementPage(),
+                      builder: (_) => const WebPage(
+                        url: 'https://www.clevermax.com.cn/second_file.html',
+                        title: '用户协议',
+                      ),
                     ),
                   );
                 },
@@ -53,7 +55,10 @@ class AgreementCheckbox extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const PrivacyPolicyPage(),
+                      builder: (_) => const WebPage(
+                        url: 'https://www.clevermax.com.cn/private_policy.html',
+                        title: '隐私政策',
+                      ),
                     ),
                   );
                 },

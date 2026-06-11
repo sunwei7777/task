@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Task</string>
+	<string>Max Task</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -51,5 +51,7 @@
 	<string>为了方便在汇报时提交相关图片信息</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>为了在提交汇报时调用摄像头保存图片</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>为了录制视频时采集声音</string>
 </dict>
 </plist>

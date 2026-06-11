@@ -564,6 +564,13 @@ class OtherTaskCounts {
   }
 }
 
+String? _coalesceNum(dynamic a, dynamic b) {
+  final num? na = a is num ? a : num.tryParse(a?.toString() ?? '');
+  if (na != null && na > 0) return na.toString();
+  final num? nb = b is num ? b : num.tryParse(b?.toString() ?? '');
+  return nb?.toString();
+}
+
 class ReportItem {
   final int id;
   final String? materialName;
@@ -576,6 +583,13 @@ class ReportItem {
   final int? taskId;
   final double completeNum;
   double currentReportNum;
+  final String? materialColor;
+  final String? mf;
+  final String? kz;
+  final String? pic;
+  final String? zs;
+  final String? rs;
+  final String? size;
 
   ReportItem({
     required this.id,
@@ -589,6 +603,13 @@ class ReportItem {
     this.taskId,
     required this.completeNum,
     required this.currentReportNum,
+    this.materialColor,
+    this.mf,
+    this.kz,
+    this.pic,
+    this.zs,
+    this.rs,
+    this.size,
   });
 
   factory ReportItem.fromJson(Map<String, dynamic> json) {
@@ -604,6 +625,13 @@ class ReportItem {
       taskId: json['taskId'],
       completeNum: (json['completeNum'] ?? 0).toDouble(),
       currentReportNum: (json['currentReportNum'] ?? 0).toDouble(),
+      materialColor: '${json['materialColor'] ?? ''}',
+      mf: _coalesceNum(json['afterWaterWidth'], json['beforeWaterWidth']),
+      kz: _coalesceNum(json['afterWaterWeight'], json['beforeWaterWeight']),
+      pic: '${json['pictureURL'] ?? ''}',
+      zs: '${json['lossRate'] ?? ''}',
+      rs: '${json['lossRate'] ?? ''}',
+      size: '${json['size'] ?? ''}',
     );
   }
 }

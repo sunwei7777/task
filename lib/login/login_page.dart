@@ -369,21 +369,21 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ],
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                TopNotification.warning(
-                                  context,
-                                  '请联系系统管理员重置密码',
-                                );
-                              },
-                              child: const Text(
-                                '忘记密码?',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Color(0xFF4A6CF7),
-                                ),
-                              ),
-                            ),
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     TopNotification.warning(
+                            //       context,
+                            //       '请联系系统管理员重置密码',
+                            //     );
+                            //   },
+                            //   child: const Text(
+                            //     '忘记密码?',
+                            //     style: TextStyle(
+                            //       fontSize: 13,
+                            //       color: Color(0xFF4A6CF7),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 20),

@@ -24,6 +24,7 @@ import 'package:flutter_application_1/store/task_controller.dart';
 
 import '../utils/cors_image.dart';
 import '../utils/dialog_custom.dart';
+import '../utils/permission_helper.dart';
 import '../index.dart';
 
 class CreateTask extends StatefulWidget {
@@ -801,6 +802,8 @@ class CreateTaskState extends State<CreateTask> {
 
   /// 从相册选择媒体
   Future<void> _pickFromGallery() async {
+    final hasPermission = await PermissionHelper.ensurePhotoPermission(context);
+    if (!hasPermission || !mounted) return;
     final assets = await AssetPicker.pickAssets(
       context,
       pickerConfig: AssetPickerConfig(
@@ -824,6 +827,8 @@ class CreateTaskState extends State<CreateTask> {
 
   /// 拍摄照片
   Future<void> _capturePhoto() async {
+    final hasPermission = await PermissionHelper.ensureCameraPermission(context);
+    if (!hasPermission || !mounted) return;
     final ImagePicker picker = ImagePicker();
     final XFile? photo = await picker.pickImage(
       source: ImageSource.camera,
@@ -841,6 +846,10 @@ class CreateTaskState extends State<CreateTask> {
 
   /// 拍摄录像
   Future<void> _captureVideo() async {
+    final hasCamera = await PermissionHelper.ensureCameraPermission(context);
+    if (!hasCamera || !mounted) return;
+    final hasMic = await PermissionHelper.ensureMicrophonePermission(context);
+    if (!hasMic || !mounted) return;
     final ImagePicker picker = ImagePicker();
     final XFile? video = await picker.pickVideo(
       source: ImageSource.camera,

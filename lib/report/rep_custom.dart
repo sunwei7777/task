@@ -25,6 +25,37 @@ class _RepCustomState extends State<RepCustom> {
   List<ReportItem> items = [];
   bool _isLoading = true;
 
+  // 根据任务名判断显示哪些自定义字段
+  bool get _showColor => _taskNamesWithColor.contains(widget.task?.taskName);
+  bool get _showMf => _taskNamesWithMf.contains(widget.task?.taskName);
+  bool get _showKz => _taskNamesWithKz.contains(widget.task?.taskName);
+  bool get _showPic => _taskNamesWithPic.contains(widget.task?.taskName);
+  bool get _showZs => _taskNamesWithZs.contains(widget.task?.taskName);
+  bool get _showRs => _taskNamesWithRs.contains(widget.task?.taskName);
+  bool get _showSize => _taskNamesWithSize.contains(widget.task?.taskName);
+
+  static const _taskNamesWithColor = {
+    '算料',
+    '大货缝制辅料入库',
+    '缝制辅料计划下达',
+    '大货面料入库',
+    '织造跟单汇报',
+    '染色跟单汇报',
+  };
+  static const _taskNamesWithMf = {'算料', '大货面料入库', '织造跟单汇报', '染色跟单汇报'};
+  static const _taskNamesWithKz = {'算料', '大货面料入库', '织造跟单汇报', '染色跟单汇报'};
+  static const _taskNamesWithPic = {
+    '算料',
+    '大货缝制辅料入库',
+    '缝制辅料计划下达',
+    '大货面料入库',
+    '织造跟单汇报',
+    '染色跟单汇报',
+  };
+  static const _taskNamesWithZs = {'织造跟单汇报'};
+  static const _taskNamesWithRs = {'染色跟单汇报'};
+  static const _taskNamesWithSize = {'大货缝制辅料入库', '缝制辅料计划下达'};
+
   @override
   void initState() {
     super.initState();
@@ -153,6 +184,14 @@ class _RepCustomState extends State<RepCustom> {
                                   unit: result['unit'] as String?,
                                   completeNum: 0,
                                   currentReportNum: 0,
+                                  materialColor:
+                                      result['materialColor'] as String?,
+                                  mf: result['mf'] as String?,
+                                  kz: result['kz'] as String?,
+                                  pic: result['pic'] as String?,
+                                  zs: result['zs'] as String?,
+                                  rs: result['rs'] as String?,
+                                  size: result['size'] as String?,
                                 ),
                               );
                             });
@@ -200,6 +239,13 @@ class _RepCustomState extends State<RepCustom> {
                               _buildNavItem('规格2'),
                               _buildNavItem('供应商'),
                               _buildNavItem('备注'),
+                              if (_showColor) _buildNavItem('颜色'),
+                              if (_showMf) _buildNavItem('门幅'),
+                              if (_showKz) _buildNavItem('克重'),
+                              if (_showPic) _buildNavItem('图片'),
+                              if (_showZs) _buildNavItem('织损'),
+                              if (_showRs) _buildNavItem('染损'),
+                              if (_showSize) _buildNavItem('尺码'),
                               _buildNavItem('订单\n数量'),
                               _buildNavItem('汇报\n数量', isActive: true),
                             ],
@@ -239,7 +285,16 @@ class _RepCustomState extends State<RepCustom> {
                               )
                             : Expanded(
                                 child: SizedBox(
-                                  height: 480,
+                                  height:
+                                      60.0 *
+                                      (7 +
+                                          (_showColor ? 1 : 0) +
+                                          (_showMf ? 1 : 0) +
+                                          (_showKz ? 1 : 0) +
+                                          (_showPic ? 1 : 0) +
+                                          (_showZs ? 1 : 0) +
+                                          (_showRs ? 1 : 0) +
+                                          (_showSize ? 1 : 0)),
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
                                     itemCount: items.length,
@@ -303,6 +358,27 @@ class _RepCustomState extends State<RepCustom> {
                                                           item.completeNum,
                                                       currentReportNum:
                                                           item.currentReportNum,
+                                                      materialColor:
+                                                          result['materialColor']
+                                                              as String?,
+                                                      mf:
+                                                          result['mf']
+                                                              as String?,
+                                                      kz:
+                                                          result['kz']
+                                                              as String?,
+                                                      pic:
+                                                          result['pic']
+                                                              as String?,
+                                                      zs:
+                                                          result['zs']
+                                                              as String?,
+                                                      rs:
+                                                          result['rs']
+                                                              as String?,
+                                                      size:
+                                                          result['size']
+                                                              as String?,
                                                     );
                                                   });
                                                 }
@@ -316,6 +392,24 @@ class _RepCustomState extends State<RepCustom> {
                                             _buildContentItem(
                                               item.remark ?? '',
                                             ),
+                                            if (_showColor)
+                                              _buildContentItem(
+                                                item.materialColor ?? '',
+                                              ),
+                                            if (_showMf)
+                                              _buildContentItem(item.mf ?? ''),
+                                            if (_showKz)
+                                              _buildContentItem(item.kz ?? ''),
+                                            if (_showPic)
+                                              _buildPicCell(item.pic),
+                                            if (_showZs)
+                                              _buildContentItem(item.zs ?? ''),
+                                            if (_showRs)
+                                              _buildContentItem(item.rs ?? ''),
+                                            if (_showSize)
+                                              _buildContentItem(
+                                                item.size ?? '',
+                                              ),
                                             _buildContentItem(
                                               '${item.completeNum.toString()}/${item.qty.toString()}',
                                             ),
@@ -430,6 +524,13 @@ class _RepCustomState extends State<RepCustom> {
                             'qty': item.qty,
                             'unit': item.unit,
                             'currentReportNum': item.currentReportNum,
+                            if (_showColor) 'materialColor': item.materialColor,
+                            if (_showMf) 'mf': item.mf,
+                            if (_showKz) 'kz': item.kz,
+                            if (_showPic) 'pic': item.pic,
+                            if (_showZs) 'zs': item.zs,
+                            if (_showRs) 'rs': item.rs,
+                            if (_showSize) 'size': item.size,
                           },
                         )
                         .toList();
@@ -488,6 +589,44 @@ class _RepCustomState extends State<RepCustom> {
           ),
           textAlign: TextAlign.center,
         ),
+      ),
+    );
+  }
+
+  Widget _buildPicCell(String? pic) {
+    final urls = pic?.split(';').where((u) => u.isNotEmpty).toList() ?? [];
+    if (urls.isEmpty) {
+      return _buildContentItem('');
+    }
+    return Container(
+      height: 60,
+      decoration: BoxDecoration(
+        color: Color(0xFFF6F6F6),
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[300]!, width: .5),
+          right: BorderSide(color: Colors.grey[300]!, width: .5),
+        ),
+      ),
+      padding: EdgeInsets.all(4),
+      child: Row(
+        children: urls.take(3).map((url) {
+          return Container(
+            width: 40,
+            height: 40,
+            margin: EdgeInsets.only(right: 2),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  color: Colors.grey[200],
+                  child: Icon(Icons.broken_image, size: 16, color: Colors.grey),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

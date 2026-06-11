@@ -9,8 +9,7 @@ import '../utils/dialog.dart';
 import '../utils/top_notification.dart';
 import 'my/setting.dart';
 import 'my/check_update_page.dart';
-import 'my/privacy_policy_page.dart';
-import 'my/service_agreement_page.dart';
+import 'utils/web_page.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -60,7 +59,9 @@ class _MyPageState extends State<MyPage> {
         currentBuildNumber: buildNumber,
       );
 
-      if (versionInfo != null && versionInfo.latestVersion != version && mounted) {
+      if (versionInfo != null &&
+          versionInfo.latestVersion != version &&
+          mounted) {
         setState(() {
           _hasNewVersion = true;
           _latestVersion = versionInfo.latestVersion;
@@ -109,8 +110,10 @@ class _MyPageState extends State<MyPage> {
                     radius: 32,
                     backgroundColor: Color(0xFF0073FF),
                     child: Text(
-                      (_userInfo?['realName']?.toString() ?? '?')
-                          .substring(0, 1),
+                      (_userInfo?['realName']?.toString() ?? '?').substring(
+                        0,
+                        1,
+                      ),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -146,11 +149,13 @@ class _MyPageState extends State<MyPage> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          _formatPhoneNumber(_userInfo?['phone'] ?? _userInfo?['userName']),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
+                          _formatPhoneNumber(
+                            _userInfo?['phone'] ?? _userInfo?['userName'],
+                          ),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ],
                     ),
@@ -207,9 +212,13 @@ class _MyPageState extends State<MyPage> {
                   _buildMenuItem(
                     icon: Icons.cloud_download,
                     title: '检查更新',
-                    subtitle: _currentVersion.isNotEmpty ? '当前 v$_currentVersion' : null,
+                    subtitle: _currentVersion.isNotEmpty
+                        ? '当前 v$_currentVersion'
+                        : null,
                     showBadge: _hasNewVersion,
-                    badgeText: _latestVersion != null ? 'v$_latestVersion' : null,
+                    badgeText: _latestVersion != null
+                        ? 'v$_latestVersion'
+                        : null,
                     onTap: () async {
                       await Navigator.push(
                         context,
@@ -230,7 +239,11 @@ class _MyPageState extends State<MyPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PrivacyPolicyPage(),
+                          builder: (_) => const WebPage(
+                            url:
+                                'https://www.clevermax.com.cn/private_policy.html',
+                            title: '隐私政策',
+                          ),
                         ),
                       );
                     },
@@ -239,12 +252,16 @@ class _MyPageState extends State<MyPage> {
                   // 隐私政策
                   _buildMenuItem(
                     icon: Icons.security,
-                    title: '服务协议',
+                    title: '用户协议',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ServiceAgreementPage(),
+                          builder: (_) => const WebPage(
+                            url:
+                                'https://www.clevermax.com.cn/second_file.html',
+                            title: '用户协议',
+                          ),
                         ),
                       );
                     },

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/task_service.dart';
+import 'package:flutter_application_1/utils/permission_helper.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_application_1/utils/video_thumbnail.dart';
@@ -80,6 +81,8 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
 
   /// 从相册选择媒体
   Future<void> _pickFromGallery() async {
+    final hasPermission = await PermissionHelper.ensurePhotoPermission(context);
+    if (!hasPermission || !mounted) return;
     final assets = await AssetPicker.pickAssets(
       context,
       pickerConfig: AssetPickerConfig(
@@ -103,6 +106,8 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
 
   /// 拍摄照片
   Future<void> _capturePhoto() async {
+    final hasPermission = await PermissionHelper.ensureCameraPermission(context);
+    if (!hasPermission || !mounted) return;
     final ImagePicker picker = ImagePicker();
     final XFile? photo = await picker.pickImage(
       source: ImageSource.camera,
@@ -121,6 +126,10 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
 
   /// 拍摄录像
   Future<void> _captureVideo() async {
+    final hasCamera = await PermissionHelper.ensureCameraPermission(context);
+    if (!hasCamera || !mounted) return;
+    final hasMic = await PermissionHelper.ensureMicrophonePermission(context);
+    if (!hasMic || !mounted) return;
     final ImagePicker picker = ImagePicker();
     final XFile? video = await picker.pickVideo(
       source: ImageSource.camera,
