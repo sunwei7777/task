@@ -54,10 +54,14 @@ class _SelectTaskState extends State<SelectTask> {
         title: widget.title,
         searchTaskNo: widget.searchTaskNo,
         onTaskSelected: (index) {
+          if (index < 0) {
+            setState(() => _selectedTaskId = null);
+            return;
+          }
           final tasks = Get.find<TaskController>().allTasks;
-          if (index >= 0 && index < tasks.length) {
+          if (index < tasks.length) {
             final taskId = tasks[index].id;
-            _selectedTaskId = taskId;
+            setState(() => _selectedTaskId = taskId);
             widget.onTaskSelected(taskId);
           }
         },

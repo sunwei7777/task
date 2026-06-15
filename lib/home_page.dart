@@ -430,7 +430,11 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 34, left: 14, right: 14),
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 14,
+                left: 14,
+                right: 14,
+              ),
               child: Column(
                 children: [
                   Row(

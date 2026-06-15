@@ -55,8 +55,17 @@ class _SelectTaskBottomState extends State<SelectTaskBottom> {
               title: '全部任务',
               // isSearch: false,
               onTaskSelected: (index) {
-                _curIndex = index;
-                _selectedTaskId = _taskIdByIndex(index);
+                if (index < 0) {
+                  setState(() {
+                    _curIndex = null;
+                    _selectedTaskId = null;
+                  });
+                  return;
+                }
+                setState(() {
+                  _curIndex = index;
+                  _selectedTaskId = _taskIdByIndex(index);
+                });
               },
             ),
           ),

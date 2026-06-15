@@ -18,7 +18,7 @@ class _FloatButtonState extends State<FloatButton> {
   Widget build(BuildContext context) {
     _screenWidth = MediaQuery.of(context).size.width;
     _screenHeight = MediaQuery.of(context).size.height;
-    _fabOffset ??= Offset(_screenWidth! - 60, _screenHeight! - 120); // 初始位置
+    _fabOffset ??= Offset(_screenWidth! - 60, _screenHeight! - 150); // 初始位置
 
     return Positioned(
       left: _fabOffset?.dx ?? 0,

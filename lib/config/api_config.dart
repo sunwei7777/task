@@ -2,13 +2,19 @@
 class ApiConfig {
   // 基础配置
   // static const String baseUrl = 'http://192.168.1.141:3002';
-  static const String baseUrl = 'http://10.30.208.251:8001';
-  static const String wsUrl = 'ws://10.30.208.251/ws/app';
+  // static const String baseUrl = 'http://10.30.208.251:8001';
+  // static const String wsUrl = 'ws://10.30.208.251/ws/app';
+  static const String baseUrl = 'http://58.221.205.66:8001';
+  static const String wsUrl = 'ws://58.221.205.66/ws/app';
   static const Duration connectTimeout = Duration(seconds: 60);
   static const Duration receiveTimeout = Duration(seconds: 120);
 
   // 接口路径
   static const String login = '/erpUser/login';
+  // 注册
+  static const String register = '/erpUser/registerUser';
+  // 注销账户
+  static const String deleteUser = '/erpUser/deleteUser';
   //获取负责人
   static const String getCompanyUsers = '/fsUser/getCompanyUsers';
   //创建我的任务，生成任务编号

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_application_1/services/storage_service.dart';
+import '../services/auth_service.dart';
 import 'change_password_page.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -50,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 12),
             _buildInfoCard(context),
             const SizedBox(height: 20),
-            // _buildLogoutButton(context),
+            _buildLogoutButton(context),
           ],
         ),
       ),
@@ -289,25 +291,24 @@ class _SettingsPageState extends State<SettingsPage> {
       width: double.infinity,
       child: TextButton(
         onPressed: () {
+          final phone =
+              _userInfo?['phone']?.toString() ??
+              _userInfo?['userName']?.toString() ??
+              '';
           showDialog(
             context: context,
-            builder: (context) => AlertDialog(
+            builder: (ctx) => AlertDialog(
               title: const Text('确认注销'),
-              content: const Text('确定要注销账号吗？'),
+              content: const Text('注销后数据将无法恢复，确定要注销账号吗？'),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pop(ctx),
                   child: const Text('取消'),
                 ),
                 TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('账号注销功能待实现'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+                  onPressed: () async {
+                    Navigator.pop(ctx);
+                    await _handleDeleteUser(phone);
                   },
                   child: const Text(
                     '确定',
@@ -336,5 +337,55 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleDeleteUser(String phone) async {
+    try {
+      final authService = AuthService();
+      final result = await authService.deleteUser(phone: phone);
+
+      if (!mounted) return;
+
+      if (result['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message'] ?? '账户已注销'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        // 清除本地数据并跳转到登录页
+        await authService.logout();
+        if (mounted) {
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/login', (route) => false);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message'] ?? '注销失败'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      String msg;
+      if (e is DioException && e.response?.data != null) {
+        final data = e.response!.data;
+        msg = (data is Map)
+            ? (data['errorMsg']?.toString() ??
+                  data['message']?.toString() ??
+                  '注销失败')
+            : '注销失败';
+      } else if (e is Exception) {
+        msg = e.toString().replaceFirst('Exception: ', '');
+      } else {
+        msg = '网络异常，请检查网络连接';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg), duration: const Duration(seconds: 2)),
+      );
+    }
   }
 }

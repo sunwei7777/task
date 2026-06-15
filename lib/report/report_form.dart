@@ -35,7 +35,9 @@ class ReportForm extends StatefulWidget {
 class _ReportFormState extends State<ReportForm> {
   final TaskService _taskService = TaskService();
   final TaskController taskController = Get.find<TaskController>();
-  final TextEditingController taskContentController = TextEditingController();
+  final TextEditingController taskContentController = TextEditingController(
+    text: '补汇报',
+  );
   final TextEditingController _remarkController = TextEditingController();
   DateTime? startDate;
   DateTime? endDate;
@@ -335,7 +337,9 @@ class _ReportFormState extends State<ReportForm> {
 
   /// 拍摄照片
   Future<void> _capturePhoto() async {
-    final hasPermission = await PermissionHelper.ensureCameraPermission(context);
+    final hasPermission = await PermissionHelper.ensureCameraPermission(
+      context,
+    );
     if (!hasPermission || !mounted) return;
     final ImagePicker picker = ImagePicker();
     final XFile? photo = await picker.pickImage(

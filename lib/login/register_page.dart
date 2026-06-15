@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
 import 'widgets/phone_input.dart';
 import 'widgets/password_input.dart';
 import 'widgets/verify_code_input.dart';
 import 'widgets/agreement_checkbox.dart';
 import 'widgets/social_login_button.dart';
 import '../utils/top_notification.dart';
+import '../services/auth_service.dart';
 
 /// 注册页面
 class RegisterPage extends StatefulWidget {
@@ -92,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // 注册处理
-  void _handleRegister() {
+  void _handleRegister() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -106,28 +108,50 @@ class _RegisterPageState extends State<RegisterPage> {
       _isLoading = true;
     });
 
-    // 模拟注册请求
-    Future.delayed(const Duration(seconds: 1), () {
+    try {
+      final authService = AuthService();
+      final result = await authService.register(
+        phone: _phoneController.text.trim(),
+        password: _passwordController.text,
+        rePassword: _confirmPasswordController.text,
+      );
+
+      if (!mounted) return;
+
+      if (result['success'] == true) {
+        TopNotification.success(context, result['message'] ?? '注册成功！');
+        // 注册成功返回登录页
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });
+      } else {
+        TopNotification.error(context, result['message'] ?? '注册失败');
+      }
+    } catch (e) {
+      if (!mounted) return;
+      String msg;
+      if (e is DioException && e.response?.data != null) {
+        final data = e.response!.data;
+        msg = (data is Map)
+            ? (data['errorMsg']?.toString() ??
+                  data['message']?.toString() ??
+                  '注册失败')
+            : '注册失败';
+      } else if (e is Exception) {
+        msg = e.toString().replaceFirst('Exception: ', '');
+      } else {
+        msg = '网络异常，请检查网络连接';
+      }
+      TopNotification.error(context, msg);
+    } finally {
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
-
-        // 模拟验证码验证
-        if (_codeController.text == '123456') {
-          TopNotification.success(context, '注册成功！');
-          // 注册成功返回登录页
-          Future.delayed(const Duration(seconds: 1), () {
-            if (mounted) {
-              Navigator.pop(context);
-            }
-          });
-        } else {
-          TopNotification.error(context, '验证码错误，请重新输入');
-          _codeController.clear();
-        }
       }
-    });
+    }
   }
 
   @override
@@ -184,21 +208,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 20),
 
                   // 验证码输入
-                  VerifyCodeInputField(
-                    controller: _codeController,
-                    countdown: _countdown,
-                    onGetCode: _getVerifyCode,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '请输入验证码';
-                      }
-                      if (!_validateCode(value)) {
-                        return '请输入6位验证码';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
+                  // VerifyCodeInputField(
+                  //   controller: _codeController,
+                  //   countdown: _countdown,
+                  //   onGetCode: _getVerifyCode,
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return '请输入验证码';
+                  //     }
+                  //     if (!_validateCode(value)) {
+                  //       return '请输入6位验证码';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  // const SizedBox(height: 20),
 
                   // 密码输入
                   PasswordInputField(

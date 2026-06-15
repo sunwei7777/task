@@ -69,6 +69,98 @@ class AuthService {
     }
   }
 
+  // 注册
+  Future<Map<String, dynamic>> register({
+    required String phone,
+    required String password,
+    required String rePassword,
+  }) async {
+    try {
+      final response = await _httpClient.post(
+        ApiConfig.register,
+        data: {
+          'phone': phone,
+          'password': password,
+          'rePassword': rePassword,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data['code'] == true) {
+          return {
+            'success': true,
+            'message': data['errorMsg']?.toString() ?? '注册成功',
+          };
+        } else {
+          return {
+            'success': false,
+            'message': data['errorMsg']?.toString() ?? '注册失败',
+          };
+        }
+      } else {
+        return {'success': false, 'message': '网络错误：${response.statusCode}'};
+      }
+    } catch (e) {
+      String msg;
+      if (e is DioException && e.response?.data != null) {
+        final data = e.response!.data;
+        msg = (data is Map)
+            ? (data['errorMsg']?.toString() ??
+                  data['message']?.toString() ??
+                  e.message ??
+                  '注册失败')
+            : (e.message ?? '注册失败');
+      } else {
+        msg = e.toString().replaceFirst('Exception: ', '');
+      }
+      return {'success': false, 'message': msg};
+    }
+  }
+
+  // 注销账户
+  Future<Map<String, dynamic>> deleteUser({required String phone}) async {
+    try {
+      final response = await _httpClient.post(
+        ApiConfig.deleteUser,
+        data: {'phone': phone},
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data['code'] == true) {
+          return {
+            'success': true,
+            'message': data['errorMsg']?.toString() ?? '账户已注销',
+          };
+        } else {
+          return {
+            'success': false,
+            'message': data['errorMsg']?.toString() ?? '注销失败',
+          };
+        }
+      } else {
+        return {'success': false, 'message': '网络错误：${response.statusCode}'};
+      }
+    } catch (e) {
+      String msg;
+      if (e is DioException && e.response?.data != null) {
+        final data = e.response!.data;
+        msg = (data is Map)
+            ? (data['errorMsg']?.toString() ??
+                  data['message']?.toString() ??
+                  e.message ??
+                  '注销失败')
+            : (e.message ?? '注销失败');
+      } else {
+        msg = e.toString().replaceFirst('Exception: ', '');
+      }
+      return {'success': false, 'message': msg};
+    }
+  }
+
   // 退出登录
   Future<void> logout() async {
     // 断开 WebSocket

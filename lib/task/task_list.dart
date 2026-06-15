@@ -53,6 +53,10 @@ class _TaskListState extends State<TaskList> {
       widget.searchTaskNo != null && widget.searchTaskNo!.isNotEmpty;
 
   void _fetchWithFilters() {
+    if (_curIndex != null) {
+      _curIndex = null;
+      widget.onTaskSelected(-1); // 通知父级清空勾选
+    }
     final text = _searchController.text.isNotEmpty
         ? _searchController.text
         : null;
