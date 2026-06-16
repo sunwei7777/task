@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_application_1/index.dart';
@@ -7,9 +8,16 @@ import 'core/navigator_key.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/store/task_controller.dart';
 import 'package:flutter_application_1/store/message_controller.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // iOS ATT 授权请求
+  if (Platform.isIOS) {
+    await AppTrackingTransparency.requestTrackingAuthorization();
+  }
+
   runApp(const MyApp());
 }
 
