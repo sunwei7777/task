@@ -2,10 +2,10 @@
 class ApiConfig {
   // 基础配置
   // static const String baseUrl = 'http://192.168.1.141:3002';
-  static const String baseUrl = 'http://10.30.208.251:8001';
-  static const String wsUrl = 'ws://10.30.208.251/ws/app';
-  // static const String baseUrl = 'http://58.221.205.66:8001';
-  // static const String wsUrl = 'ws://58.221.205.66/ws/app';
+  // static const String baseUrl = 'http://10.30.208.251:8001';
+  // static const String wsUrl = 'ws://10.30.208.251/ws/app';
+  static const String baseUrl = 'http://58.221.205.66:8001';
+  static const String wsUrl = 'ws://58.221.205.66/ws/app';
   static const Duration connectTimeout = Duration(seconds: 60);
   static const Duration receiveTimeout = Duration(seconds: 120);
 
