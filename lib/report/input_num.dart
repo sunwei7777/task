@@ -67,7 +67,7 @@ class _InputNumState extends State<InputNum> {
             // 顶部栏：左取消，右确定
             Container(
               color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
