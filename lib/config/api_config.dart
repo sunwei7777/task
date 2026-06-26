@@ -81,6 +81,18 @@ class ApiConfig {
   static const String clockIn = '/taskManage/message/clockIn';
   // 下班关闭语音提醒
   static const String clockOut = '/taskManage/message/clockOut';
+  // 备注处理列表
+  static const String reportRemarkReviewList =
+      '/taskManage/reportRemarkReview/list';
+  // 备注处理详情
+  static const String reportRemarkReviewDetail =
+      '/taskManage/reportRemarkReview/detail';
+  // 提交备注处理意见
+  static const String reportRemarkReviewSubmitComment =
+      '/taskManage/reportRemarkReview/submitComment';
+  // 批量标记备注已读
+  static const String reportRemarkReviewBatchMarkRead =
+      '/taskManage/reportRemarkReview/batchMarkRead';
 
   // 连接超时时间
   static const int connectTimeoutSeconds = 60;

@@ -320,6 +320,7 @@ class ReportHistoryItem {
   final List<dynamic> imageList;
   final List<dynamic> styleDetailList;
   final List<dynamic> skuDetailList;
+  final int remarkAuditSize;
 
   ReportHistoryItem({
     required this.id,
@@ -341,6 +342,7 @@ class ReportHistoryItem {
     required this.imageList,
     required this.styleDetailList,
     required this.skuDetailList,
+    this.remarkAuditSize = 0,
   });
 
   factory ReportHistoryItem.fromJson(Map<String, dynamic> json) {
@@ -364,6 +366,7 @@ class ReportHistoryItem {
       imageList: json['imageList'] ?? [],
       styleDetailList: json['styleDetails'] ?? [],
       skuDetailList: json['skuDetails'] ?? [],
+      remarkAuditSize: json['remarkAuditSize'] ?? 0,
     );
   }
 }

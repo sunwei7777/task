@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/store/message_controller.dart';
+import 'package:flutter_application_1/message_page.dart';
 
 class Tabbar extends StatefulWidget {
   final int currentIndex;
@@ -69,7 +70,13 @@ class _TabbarState extends State<Tabbar> {
           BottomNavigationBarItem(
             icon: Obx(() {
               final count = Get.isRegistered<MessageController>()
-                  ? Get.find<MessageController>().totalUnreadCount.value
+                  ? MessagePage.badgeCategoryKeys.fold<int>(
+                      0,
+                      (sum, key) =>
+                          sum +
+                          (Get.find<MessageController>().categoryStats[key] ??
+                              0),
+                    )
                   : 0;
               return Stack(
                 clipBehavior: Clip.none,
@@ -85,7 +92,10 @@ class _TabbarState extends State<Tabbar> {
                           color: Colors.red,
                           shape: BoxShape.circle,
                         ),
-                        constraints: BoxConstraints(minWidth: 16, minHeight: 16),
+                        constraints: BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
                         child: Text(
                           count > 99 ? '99' : count.toString(),
                           style: TextStyle(

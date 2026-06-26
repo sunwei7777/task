@@ -18,7 +18,7 @@ class _FloatButtonState extends State<FloatButton> {
   Widget build(BuildContext context) {
     _screenWidth = MediaQuery.of(context).size.width;
     _screenHeight = MediaQuery.of(context).size.height;
-    _fabOffset ??= Offset(_screenWidth! - 60, _screenHeight! - 150); // 初始位置
+    _fabOffset ??= Offset(_screenWidth! - 60, _screenHeight! - 160); // 初始位置
 
     return Positioned(
       left: _fabOffset?.dx ?? 0,
@@ -69,9 +69,9 @@ class _FloatButtonState extends State<FloatButton> {
 
       // 垂直边界检查
       if (_fabOffset!.dy < 24) {
-        _fabOffset = Offset(_fabOffset!.dx, 24); // 距离顶部最小20
-      } else if (_fabOffset!.dy > _screenHeight! - 120) {
-        _fabOffset = Offset(_fabOffset!.dx, _screenHeight! - 120); // 距离底部最小120
+        _fabOffset = Offset(_fabOffset!.dx, 24); // 距离顶部最小24
+      } else if (_fabOffset!.dy > _screenHeight! - 160) {
+        _fabOffset = Offset(_fabOffset!.dx, _screenHeight! - 160); // 距离底部最小160
       }
     });
   }

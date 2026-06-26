@@ -4,7 +4,9 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../models/task.dart';
+import '../models/message.dart';
 import '../services/task_service.dart';
+import '../services/message_service.dart';
 import '../utils/cors_image.dart';
 import '../utils/video_preview.dart';
 import '../utils/video_thumbnail.dart';
@@ -21,7 +23,9 @@ class ReportHistory extends StatefulWidget {
 
 class _ReportHistoryState extends State<ReportHistory> {
   final TaskService _taskService = TaskService();
+  final MessageService _messageService = MessageService();
   final Map<int, double> _downloadProgress = {};
+  RemarkReviewItem? _remarkDetail;
 
   static const _reportMethodMap = {
     'slider': '整体汇报',
@@ -129,6 +133,151 @@ class _ReportHistoryState extends State<ReportHistory> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _fetchRemark() async {
+    final detail = await _messageService.fetchRemarkDetail(widget.item.id);
+    if (mounted && detail != null) {
+      setState(() => _remarkDetail = detail);
+    }
+  }
+
+  void _showOpinionBottomSheet() {
+    final opinions = <RemarkComment>[];
+    if (_remarkDetail != null) {
+      for (final reviewer in _remarkDetail!.reviewers) {
+        opinions.addAll(reviewer.comments);
+      }
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.4,
+          minChildSize: 0.3,
+          maxChildSize: 0.7,
+          expand: false,
+          builder: (context, scrollController) {
+            return Column(
+              children: [
+                // 顶部标题栏
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color(0xFFEEEEEE)),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        '意见列表',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(Icons.close, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+                // 列表
+                Expanded(
+                  child: opinions.isEmpty
+                      ? const Center(
+                          child: Text(
+                            '暂无意见',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        )
+                      : ListView.separated(
+                          controller: scrollController,
+                          padding: const EdgeInsets.all(16),
+                          itemCount: opinions.length,
+                          separatorBuilder: (_, __) =>
+                              const Divider(height: 16),
+                          itemBuilder: (context, index) {
+                            final o = opinions[index];
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // 头像占位
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF2B64FF),
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      o.commenterName.isNotEmpty
+                                          ? o.commenterName.substring(0, 1)
+                                          : '?',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            o.commenterName,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Text(
+                                            o.createTime,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        o.content,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -454,6 +603,32 @@ class _ReportHistoryState extends State<ReportHistory> {
                               ),
                             ),
                           ),
+                          if (widget.item.remarkAuditSize > 0) ...[
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () async {
+                                await _fetchRemark();
+                                if (mounted) _showOpinionBottomSheet();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2B64FF),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '${widget.item.remarkAuditSize}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                       // SizedBox(height: 8),

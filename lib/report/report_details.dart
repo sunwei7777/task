@@ -39,6 +39,8 @@ class _ReportDetailsState extends State<ReportDetails> {
   final TextEditingController _remarkController = TextEditingController();
   List<int> _mediaIds = [];
   List<int> _attachmentIds = [];
+  bool _isMediaUploading = false;
+  bool _isAttachmentUploading = false;
   String? _recordId;
   late Task newTask;
 
@@ -167,6 +169,24 @@ class _ReportDetailsState extends State<ReportDetails> {
       TopNotification.show(
         context,
         message: '请选择汇报进度',
+        backgroundColor: Colors.orange,
+      );
+      return;
+    }
+
+    if (_isMediaUploading) {
+      TopNotification.show(
+        context,
+        message: '图片/视频正在上传中，请稍候',
+        backgroundColor: Colors.orange,
+      );
+      return;
+    }
+
+    if (_isAttachmentUploading) {
+      TopNotification.show(
+        context,
+        message: '附件正在上传中，请稍候',
         backgroundColor: Colors.orange,
       );
       return;
@@ -585,6 +605,9 @@ class _ReportDetailsState extends State<ReportDetails> {
                       // 汇报进度
                       // buildTaskItem('汇报进度', '100% → 100%', isOrder: true),
                       ReportProgress(
+                        key: ValueKey(
+                          _taskController.currentTask.value?.id ?? 0,
+                        ),
                         reportMethod:
                             _taskController.currentTask.value?.reportMethod ??
                             '整体汇报',
@@ -667,9 +690,11 @@ class _ReportDetailsState extends State<ReportDetails> {
                       children: [
                         ReportMediaSection(
                           onMediaChanged: (ids) => _mediaIds = ids,
+                          onUploadingChanged: (v) => _isMediaUploading = v,
                         ),
                         ReportAttachmentSection(
                           onAttachmentChanged: (ids) => _attachmentIds = ids,
+                          onUploadingChanged: (v) => _isAttachmentUploading = v,
                         ),
                       ],
                     ),

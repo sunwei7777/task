@@ -249,6 +249,14 @@ class _DailyReportListPageState extends State<DailyReportListPage> {
     final taskContentData = taskDetailData?['content'] is Map<String, dynamic>
         ? taskDetailData!['content'] as Map<String, dynamic>
         : null;
+    // 阻塞任务列表
+    List? blockTaskList;
+    if (widget.category == 'task_block' && taskContentData != null) {
+      blockTaskList = taskContentData['blockTaskList'] as List?;
+    }
+    if (blockTaskList == null && widget.category == 'task_block') {
+      blockTaskList = taskDetailData?['blockTaskList'] as List?;
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
@@ -308,8 +316,15 @@ class _DailyReportListPageState extends State<DailyReportListPage> {
             const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: _buildTaskBriefInfo(taskContentData),
+              child: _buildTaskBriefInfo(taskContentData, report),
             ),
+            if (blockTaskList != null && blockTaskList.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: _buildBlockTaskList(blockTaskList),
+              ),
+            ],
           ],
           if (dailyReportData != null) ...[
             const SizedBox(height: 12),
@@ -330,6 +345,7 @@ class _DailyReportListPageState extends State<DailyReportListPage> {
             ...newTaskItems.map((task) => _buildNewTaskPreview(report, task)),
           ],
           if (widget.category != 'off_work_report' &&
+              widget.category != 'task_block' &&
               !isDailyReport &&
               (!isNewTask || newTaskItems.isEmpty)) ...[
             const SizedBox(height: 12),
@@ -516,11 +532,19 @@ class _DailyReportListPageState extends State<DailyReportListPage> {
     );
   }
 
-  Widget _buildTaskBriefInfo(Map<String, dynamic> data) {
+  Widget _buildTaskBriefInfo(
+    Map<String, dynamic> data,
+    MessageItemModel report,
+  ) {
     final taskNo = data['taskNo']?.toString() ?? '';
     final taskName = data['taskName']?.toString() ?? '';
     final billNo = data['billNo']?.toString() ?? '';
     final styleCode = data['styleCode']?.toString() ?? '';
+    final startTime = data['startTime']?.toString() ?? '';
+    final planEndTime =
+        (data['planEndTime'] ?? data['planFinishTime'] ?? data['endTime'])
+            ?.toString() ??
+        '';
     final userName = data['userName']?.toString() ?? '';
     final updateName = data['updateName']?.toString() ?? '';
     final cancelled = data['cancelled'] == true;
@@ -535,8 +559,24 @@ class _DailyReportListPageState extends State<DailyReportListPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (taskNo.isNotEmpty) _infoRow('任务编号', taskNo),
+          if (taskNo.isNotEmpty)
+            GestureDetector(
+              onTap: () {
+                if (report.isRead == 0) {
+                  _controller.markAsRead([report.id]);
+                }
+                Get.to(() => TaskLook(isHasDetail: true, taskNo: taskNo));
+              },
+              child: _infoRow(
+                '任务编号',
+                taskNo,
+                showArrow: true,
+                valueColor: const Color(0xFF3895F2),
+              ),
+            ),
           if (taskName.isNotEmpty) _infoRow('任务名称', taskName),
+          if (startTime.isNotEmpty) _infoRow('开始时间', startTime),
+          if (planEndTime.isNotEmpty) _infoRow('计划完成', planEndTime),
           if (billNo.isNotEmpty) _infoRow('订单号', billNo),
           if (styleCode.isNotEmpty) _infoRow('款号', styleCode),
           if (userName.isNotEmpty) _infoRow('责任人', userName),
@@ -557,7 +597,84 @@ class _DailyReportListPageState extends State<DailyReportListPage> {
     );
   }
 
-  Widget _infoRow(String label, String value) {
+  // 阻塞任务列表
+  Widget _buildBlockTaskList(List blockTaskList) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF2F2),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0x1AFF6B6B)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.block, size: 14, color: Color(0xFFFF6B6B)),
+              SizedBox(width: 4),
+              Text(
+                '阻塞任务：',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFFFF6B6B),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          ...blockTaskList.map((item) {
+            final map = item as Map<String, dynamic>;
+            final blockTaskName = map['blockTaskName']?.toString() ?? '';
+            final blockUserNames = map['blockUserNames']?.toString() ?? '';
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '• ',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF666666)),
+                  ),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF333333),
+                        ),
+                        children: [
+                          TextSpan(
+                            text: blockTaskName.isNotEmpty
+                                ? blockTaskName
+                                : '未知任务',
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          if (blockUserNames.isNotEmpty)
+                            TextSpan(
+                              text: '（负责人：$blockUserNames）',
+                              style: const TextStyle(color: Color(0xFF999999)),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(
+    String label,
+    String value, {
+    bool showArrow = false,
+    Color? valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
@@ -574,9 +691,14 @@ class _DailyReportListPageState extends State<DailyReportListPage> {
               value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12, color: Color(0xFF333333)),
+              style: TextStyle(
+                fontSize: 12,
+                color: valueColor ?? const Color(0xFF333333),
+              ),
             ),
           ),
+          if (showArrow)
+            const Icon(Icons.chevron_right, size: 16, color: Color(0xFF3895F2)),
         ],
       ),
     );

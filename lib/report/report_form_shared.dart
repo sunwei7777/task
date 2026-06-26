@@ -7,12 +7,20 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_application_1/utils/video_thumbnail.dart';
 
+/// 媒体文件最大数量
+const int maxMediaFiles = 18;
+
 /// 图片/视频上传区域
 /// 调用方通过 [onMediaChanged] 获取已上传成功的文件 ID 列表
 class ReportMediaSection extends StatefulWidget {
   final ValueChanged<List<int>>? onMediaChanged;
+  final ValueChanged<bool>? onUploadingChanged;
 
-  const ReportMediaSection({super.key, this.onMediaChanged});
+  const ReportMediaSection({
+    super.key,
+    this.onMediaChanged,
+    this.onUploadingChanged,
+  });
 
   @override
   State<ReportMediaSection> createState() => _ReportMediaSectionState();
@@ -29,6 +37,11 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
       _uploadedUrls.map((url) => int.tryParse(url)).whereType<int>().toList();
 
   void _notify() => widget.onMediaChanged?.call(_uploadedIds);
+
+  bool get _hasPendingUploads => _progress.values.any((p) => p >= 0 && p < 1.0);
+
+  void _notifyUploading() =>
+      widget.onUploadingChanged?.call(_hasPendingUploads);
 
   Future<void> _pickMedia() async {
     // 显示选择对话框
@@ -86,7 +99,7 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
     final assets = await AssetPicker.pickAssets(
       context,
       pickerConfig: AssetPickerConfig(
-        maxAssets: 9 - _files.length,
+        maxAssets: maxMediaFiles - _files.length,
         requestType: RequestType.common,
       ),
     );
@@ -106,7 +119,9 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
 
   /// 拍摄照片
   Future<void> _capturePhoto() async {
-    final hasPermission = await PermissionHelper.ensureCameraPermission(context);
+    final hasPermission = await PermissionHelper.ensureCameraPermission(
+      context,
+    );
     if (!hasPermission || !mounted) return;
     final ImagePicker picker = ImagePicker();
     final XFile? photo = await picker.pickImage(
@@ -168,6 +183,7 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
         _uploadedUrls.add(url);
         _progress[index] = 1.0;
       });
+      _notifyUploading();
       _notify();
     } catch (_) {
       if (mounted) setState(() => _progress[index] = -1);
@@ -209,11 +225,11 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
               const Text('图片/视频', style: TextStyle(color: Color(0xFF010101))),
               const Spacer(),
               GestureDetector(
-                onTap: _files.length < 9 ? _pickMedia : null,
+                onTap: _files.length < maxMediaFiles ? _pickMedia : null,
                 child: Text(
                   '添加',
                   style: TextStyle(
-                    color: _files.length < 9
+                    color: _files.length < maxMediaFiles
                         ? Color(0xFF0073FF)
                         : Colors.grey[400],
                     fontSize: 14,
@@ -262,7 +278,7 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
                     _files.length,
                     (i) => _buildItem(_files[i], i),
                   ),
-                  if (_files.length < 9)
+                  if (_files.length < maxMediaFiles)
                     GestureDetector(
                       onTap: _pickMedia,
                       child: Container(
@@ -283,7 +299,7 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              '${_files.length}/9',
+                              '${_files.length}/$maxMediaFiles',
                               style: TextStyle(
                                 color: Colors.grey[500],
                                 fontSize: 10,
@@ -430,8 +446,13 @@ class _ReportMediaSectionState extends State<ReportMediaSection> {
 /// 调用方通过 [onAttachmentChanged] 获取已上传成功的文件 ID 列表
 class ReportAttachmentSection extends StatefulWidget {
   final ValueChanged<List<int>>? onAttachmentChanged;
+  final ValueChanged<bool>? onUploadingChanged;
 
-  const ReportAttachmentSection({super.key, this.onAttachmentChanged});
+  const ReportAttachmentSection({
+    super.key,
+    this.onAttachmentChanged,
+    this.onUploadingChanged,
+  });
 
   @override
   State<ReportAttachmentSection> createState() =>
@@ -448,6 +469,11 @@ class _ReportAttachmentSectionState extends State<ReportAttachmentSection> {
       _uploadedUrls.map((url) => int.tryParse(url)).whereType<int>().toList();
 
   void _notify() => widget.onAttachmentChanged?.call(_uploadedIds);
+
+  bool get _hasPendingUploads => _progress.values.any((p) => p >= 0 && p < 1.0);
+
+  void _notifyUploading() =>
+      widget.onUploadingChanged?.call(_hasPendingUploads);
 
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(allowMultiple: true);
@@ -483,6 +509,7 @@ class _ReportAttachmentSectionState extends State<ReportAttachmentSection> {
         _uploadedUrls.add(url);
         _progress[index] = 1.0;
       });
+      _notifyUploading();
       _notify();
     } catch (_) {
       if (mounted) setState(() => _progress[index] = -1);

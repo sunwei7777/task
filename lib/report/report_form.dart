@@ -13,6 +13,7 @@ import 'package:flutter_application_1/utils/task_info_card.dart';
 import 'package:flutter_application_1/utils/video_thumbnail.dart';
 import 'package:flutter_application_1/report/report_form_shared.dart';
 import 'package:flutter_application_1/report/progress_exceed_dialog.dart';
+
 import 'package:flutter_application_1/utils/permission_helper.dart';
 import 'package:flutter_application_1/utils/top_notification.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
@@ -21,6 +22,9 @@ import 'package:get/get.dart';
 import '../models/task.dart';
 import '../services/task_service.dart';
 import '../store/task_controller.dart';
+
+/// 媒体文件最大数量
+const int maxMediaFiles = 18;
 
 class ReportForm extends StatefulWidget {
   final int? taskId;
@@ -171,6 +175,19 @@ class _ReportFormState extends State<ReportForm> {
       return;
     }
 
+    // 检查是否有未上传完成的文件
+    final hasUploading =
+        _mediaProgress.values.any((p) => p >= 0 && p < 1) ||
+        _attachmentProgress.values.any((p) => p >= 0 && p < 1);
+    if (hasUploading) {
+      TopNotification.show(
+        context,
+        message: '请等待文件上传完成',
+        backgroundColor: Colors.orange,
+      );
+      return;
+    }
+
     String fmt(DateTime dt) {
       return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
     }
@@ -316,7 +333,7 @@ class _ReportFormState extends State<ReportForm> {
     final assets = await AssetPicker.pickAssets(
       context,
       pickerConfig: AssetPickerConfig(
-        maxAssets: 9 - _mediaFiles.length,
+        maxAssets: maxMediaFiles - _mediaFiles.length,
         requestType: RequestType.common,
       ),
     );
@@ -431,11 +448,11 @@ class _ReportFormState extends State<ReportForm> {
               const Text('图片/视频', style: TextStyle(color: Color(0xFF010101))),
               const Spacer(),
               GestureDetector(
-                onTap: _mediaFiles.length < 9 ? _pickMedia : null,
+                onTap: _mediaFiles.length < maxMediaFiles ? _pickMedia : null,
                 child: Text(
                   '添加',
                   style: TextStyle(
-                    color: _mediaFiles.length < 9
+                    color: _mediaFiles.length < maxMediaFiles
                         ? Color(0xFF0073FF)
                         : Colors.grey[400],
                     fontSize: 14,
@@ -486,7 +503,8 @@ class _ReportFormState extends State<ReportForm> {
                   ...List.generate(_mediaFiles.length, (index) {
                     return _buildMediaItem(_mediaFiles[index], index);
                   }),
-                  if (_mediaFiles.length < 9) _buildAddMediaButtons(),
+                  if (_mediaFiles.length < maxMediaFiles)
+                    _buildAddMediaButtons(),
                 ],
               ),
             ),
@@ -496,7 +514,7 @@ class _ReportFormState extends State<ReportForm> {
   }
 
   Widget _buildAddMediaButtons() {
-    if (_mediaFiles.length >= 9) return const SizedBox.shrink();
+    if (_mediaFiles.length >= maxMediaFiles) return const SizedBox.shrink();
     return GestureDetector(
       onTap: _pickMedia,
       child: Container(
@@ -513,7 +531,7 @@ class _ReportFormState extends State<ReportForm> {
             Icon(Icons.camera_alt_outlined, color: Colors.grey[500], size: 24),
             SizedBox(height: 4),
             Text(
-              '${_mediaFiles.length}/9',
+              '${_mediaFiles.length}/$maxMediaFiles',
               style: TextStyle(color: Colors.grey[500], fontSize: 10),
             ),
           ],

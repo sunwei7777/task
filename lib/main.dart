@@ -41,6 +41,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
+      builder: (context, child) {
+        return SafeArea(
+          bottom: true,
+          maintainBottomViewPadding: true,
+          child: child!,
+        );
+      },
       // 设置登录页为首页
       home: const LoginPage(),
       // 添加路由配置，方便后续跳转

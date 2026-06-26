@@ -142,9 +142,13 @@ class TaskPageState extends State<TaskPage> {
 
           // 内容区域
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(12),
-              child: Column(
+            child: RefreshIndicator(
+              onRefresh: () => _taskController.fetchAllTaskTypeCounts(
+                  startTime: '', endTime: ''),
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.all(12),
+                child: Column(
                 children: [
                   // 订单任务
                   Obx(() {
@@ -273,6 +277,7 @@ class TaskPageState extends State<TaskPage> {
                   }),
                 ],
               ),
+            ),
             ),
           ),
         ],

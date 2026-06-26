@@ -127,6 +127,10 @@ class IndexState extends State<Index> {
       return _buildTaskBlockReminder(payload);
     }
 
+    if (category == 'report_remark_review') {
+      return _buildRemarkReviewReminder(payload);
+    }
+
     final title =
         _getMessageValue(payload, 'title') ??
         _getMessageValue(payload, 'category') ??
@@ -276,6 +280,42 @@ class IndexState extends State<Index> {
     );
   }
 
+  MessageReminderData _buildRemarkReviewReminder(Map<String, dynamic> payload) {
+    final parsed = _parseMessageContent(payload['content']);
+    final detail = (parsed is Map<String, dynamic>)
+        ? parsed
+        : <String, dynamic>{};
+    final reporterName = detail['reporterName']?.toString() ?? '';
+    final taskName = detail['taskName']?.toString() ?? '';
+    final billNo = detail['billNo']?.toString() ?? '';
+    final taskNo = detail['taskNo']?.toString() ?? '';
+    final remark = detail['remark']?.toString() ?? '';
+
+    final title = _getMessageValue(payload, 'title') ?? '汇报备注查阅提醒';
+    final time = _formatMessageTime(_getMessageValue(payload, 'createTime'));
+
+    final buffer = StringBuffer();
+    if (reporterName.isNotEmpty) buffer.write('$reporterName');
+    if (taskName.isNotEmpty) buffer.write('的「$taskName」');
+    buffer.write('有新的备注需要您查阅处理');
+    if (remark.isNotEmpty) buffer.write('\n备注：$remark');
+
+    final detailLines = <String>[];
+    if (taskNo.isNotEmpty) detailLines.add('任务编号：$taskNo');
+    if (billNo.isNotEmpty) detailLines.add('订单号：$billNo');
+
+    return MessageReminderData(
+      title: title,
+      time: time,
+      createdAt: _parseMessageTime(_getMessageValue(payload, 'createTime')),
+      segments: _buildMessageSegments(buffer.toString()),
+      icon: _iconForCategory('report_remark_review'),
+      iconColor: _iconColorForCategory('report_remark_review'),
+      category: 'report_remark_review',
+      detailLines: detailLines,
+    );
+  }
+
   int _getNewTaskCount(dynamic content) {
     final parsed = _parseMessageContent(content);
     if (parsed is Map) {
@@ -391,6 +431,8 @@ class IndexState extends State<Index> {
         return Icons.edit_note;
       case 'task_block':
         return Icons.block;
+      case 'report_remark_review':
+        return Icons.rate_review;
       default:
         return Icons.campaign;
     }
@@ -410,6 +452,8 @@ class IndexState extends State<Index> {
         return const Color(0xFFFF7A1A);
       case 'task_block':
         return const Color(0xFFE74C3C);
+      case 'report_remark_review':
+        return const Color(0xFF3895F2);
       default:
         return const Color(0xFFFF7A1A);
     }
