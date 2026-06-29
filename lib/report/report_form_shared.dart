@@ -727,54 +727,57 @@ class ReportRemarkSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14.0),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!, width: 0.5),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.notes, color: Colors.grey, size: 16),
-              const SizedBox(width: 8),
-              const Text('备注', style: TextStyle(color: Color(0xFF010101))),
-            ],
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14.0),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.grey[300]!, width: 0.5),
           ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: controller,
-            readOnly: readOnly,
-            maxLines: readOnly ? null : maxLines,
-            minLines: readOnly ? 1 : minLines,
-            style: const TextStyle(fontSize: 14, color: Colors.black),
-            decoration: InputDecoration(
-              hintText: '请输入备注',
-              hintStyle: TextStyle(fontSize: 14, color: Colors.grey[400]),
-              filled: true,
-              fillColor: Colors.grey[50],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: BorderSide(color: Color(0xFFDDDDDD)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: BorderSide(color: Color(0xFFDDDDDD)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: BorderSide(color: Color(0xFF0073FF)),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.notes, color: Colors.grey, size: 16),
+                const SizedBox(width: 8),
+                const Text('备注', style: TextStyle(color: Color(0xFF010101))),
+              ],
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: controller,
+              readOnly: readOnly,
+              maxLines: readOnly ? null : maxLines,
+              minLines: readOnly ? 1 : minLines,
+              style: const TextStyle(fontSize: 14, color: Colors.black),
+              decoration: InputDecoration(
+                hintText: '请输入备注',
+                hintStyle: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                filled: true,
+                fillColor: Colors.grey[50],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(color: Color(0xFFDDDDDD)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(color: Color(0xFFDDDDDD)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(color: Color(0xFF0073FF)),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

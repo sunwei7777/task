@@ -239,204 +239,209 @@ class _CorrelationOrderState extends State<CorrelationOrder> {
       builder: (sheetContext) {
         return StatefulBuilder(
           builder: (context, setSheetState) {
-            return Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.8,
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 8),
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16, 12, 8, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '筛选',
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close, size: 22),
-                          onPressed: () => Navigator.pop(context),
-                          padding: EdgeInsets.zero,
-                          constraints: BoxConstraints(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(height: 1),
-                  Flexible(
-                    child: ListView(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 8),
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
                       ),
-                      children: [
-                        _buildSheetSection(
-                          title: '订单状态',
-                          expanded: tempStateExpanded,
-                          onToggle: () => setSheetState(
-                            () => tempStateExpanded = !tempStateExpanded,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16, 12, 8, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '筛选',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                          child: Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: _orderStateOptions.map((label) {
-                              final selected = tempState == label;
-                              return GestureDetector(
-                                onTap: () => setSheetState(() {
-                                  tempState = selected ? null : label;
-                                  tempStateLabel = selected ? null : label;
-                                }),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: selected
-                                        ? Color(0xFF0073FF)
-                                        : Color(0xFFF5F6FA),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    label,
-                                    style: TextStyle(
+                          IconButton(
+                            icon: Icon(Icons.close, size: 22),
+                            onPressed: () => Navigator.pop(context),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(height: 1),
+                    Flexible(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        children: [
+                          _buildSheetSection(
+                            title: '订单状态',
+                            expanded: tempStateExpanded,
+                            onToggle: () => setSheetState(
+                              () => tempStateExpanded = !tempStateExpanded,
+                            ),
+                            child: Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: _orderStateOptions.map((label) {
+                                final selected = tempState == label;
+                                return GestureDetector(
+                                  onTap: () => setSheetState(() {
+                                    tempState = selected ? null : label;
+                                    tempStateLabel = selected ? null : label;
+                                  }),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
                                       color: selected
-                                          ? Colors.white
-                                          : Color(0xFF333333),
-                                      fontSize: 14,
+                                          ? Color(0xFF0073FF)
+                                          : Color(0xFFF5F6FA),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      label,
+                                      style: TextStyle(
+                                        color: selected
+                                            ? Colors.white
+                                            : Color(0xFF333333),
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        _buildSheetInput(
-                          '订单编号',
-                          tempBillNo,
-                          (v) => tempBillNo = v,
-                        ),
-                        SizedBox(height: 12),
-                        _buildSheetInput(
-                          '款号',
-                          tempStyleCode,
-                          (v) => tempStyleCode = v,
-                        ),
-                        SizedBox(height: 12),
-                        _buildSheetInput(
-                          '产品名称',
-                          tempStyleName,
-                          (v) => tempStyleName = v,
-                        ),
-                        SizedBox(height: 12),
-                        _buildSheetInput(
-                          '客户',
-                          tempCustIdName,
-                          (v) => tempCustIdName = v,
-                        ),
-                        SizedBox(height: 12),
-                        _buildSheetInput(
-                          '业务员',
-                          tempSalerIdName,
-                          (v) => tempSalerIdName = v,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(height: 1),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      12,
-                      16,
-                      MediaQuery.of(context).padding.bottom + 12,
-                    ),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setSheetState(() {
-                              tempState = null;
-                              tempStateLabel = null;
-                              tempBillNo = '';
-                              tempStyleCode = '';
-                              tempStyleName = '';
-                              tempCustIdName = '';
-                              tempSalerIdName = '';
-                            });
-                          },
-                          child: Container(
-                            height: 44,
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                            child: Text(
-                              '重置',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Color(0xFF333333),
-                              ),
+                                );
+                              }).toList(),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: GestureDetector(
+                          SizedBox(height: 16),
+                          _buildSheetInput(
+                            '订单编号',
+                            tempBillNo,
+                            (v) => tempBillNo = v,
+                          ),
+                          SizedBox(height: 12),
+                          _buildSheetInput(
+                            '款号',
+                            tempStyleCode,
+                            (v) => tempStyleCode = v,
+                          ),
+                          SizedBox(height: 12),
+                          _buildSheetInput(
+                            '产品名称',
+                            tempStyleName,
+                            (v) => tempStyleName = v,
+                          ),
+                          SizedBox(height: 12),
+                          _buildSheetInput(
+                            '客户',
+                            tempCustIdName,
+                            (v) => tempCustIdName = v,
+                          ),
+                          SizedBox(height: 12),
+                          _buildSheetInput(
+                            '业务员',
+                            tempSalerIdName,
+                            (v) => tempSalerIdName = v,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(height: 1),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        12,
+                        16,
+                        MediaQuery.of(context).padding.bottom + 12,
+                      ),
+                      child: Row(
+                        children: [
+                          GestureDetector(
                             onTap: () {
-                              _selectedOrderState = tempState;
-                              _selectedOrderStateLabel = tempStateLabel;
-                              _billNoController.text = tempBillNo;
-                              _styleCodeController.text = tempStyleCode;
-                              _styleNameController.text = tempStyleName;
-                              _custIdNameController.text = tempCustIdName;
-                              _salerIdNameController.text = tempSalerIdName;
-                              _stateExpanded = tempStateExpanded;
-                              Navigator.pop(context);
-                              _loadOrders();
+                              setSheetState(() {
+                                tempState = null;
+                                tempStateLabel = null;
+                                tempBillNo = '';
+                                tempStyleCode = '';
+                                tempStyleName = '';
+                                tempCustIdName = '';
+                                tempSalerIdName = '';
+                              });
                             },
                             child: Container(
                               height: 44,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Color(0xFF0073FF),
+                                border: Border.all(color: Colors.grey[300]!),
                                 borderRadius: BorderRadius.circular(22),
                               ),
                               child: Text(
-                                '确定',
+                                '重置',
                                 style: TextStyle(
                                   fontSize: 15,
-                                  color: Colors.white,
+                                  color: Color(0xFF333333),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                _selectedOrderState = tempState;
+                                _selectedOrderStateLabel = tempStateLabel;
+                                _billNoController.text = tempBillNo;
+                                _styleCodeController.text = tempStyleCode;
+                                _styleNameController.text = tempStyleName;
+                                _custIdNameController.text = tempCustIdName;
+                                _salerIdNameController.text = tempSalerIdName;
+                                _stateExpanded = tempStateExpanded;
+                                Navigator.pop(context);
+                                _loadOrders();
+                              },
+                              child: Container(
+                                height: 44,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF0073FF),
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                child: Text(
+                                  '确定',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
@@ -1072,178 +1077,183 @@ class _CorrelationOrderState extends State<CorrelationOrder> {
       builder: (sheetContext) {
         return StatefulBuilder(
           builder: (context, setSheetState) {
-            return Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.7,
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 8),
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16, 12, 8, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '筛选',
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close, size: 22),
-                          onPressed: () => Navigator.pop(context),
-                          padding: EdgeInsets.zero,
-                          constraints: BoxConstraints(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(height: 1),
-                  Flexible(
-                    child: ListView(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.7,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 8),
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
                       ),
-                      children: [
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: stateOptions.map((label) {
-                            final selected = tempOrderState == label;
-                            return GestureDetector(
-                              onTap: () => setSheetState(() {
-                                tempOrderState = selected ? null : label;
-                              }),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: selected
-                                      ? Color(0xFF0073FF)
-                                      : Color(0xFFF5F6FA),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  label,
-                                  style: TextStyle(
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16, 12, 8, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '筛选',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close, size: 22),
+                            onPressed: () => Navigator.pop(context),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(height: 1),
+                    Flexible(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        children: [
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: stateOptions.map((label) {
+                              final selected = tempOrderState == label;
+                              return GestureDetector(
+                                onTap: () => setSheetState(() {
+                                  tempOrderState = selected ? null : label;
+                                }),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
                                     color: selected
-                                        ? Colors.white
-                                        : Color(0xFF333333),
-                                    fontSize: 14,
+                                        ? Color(0xFF0073FF)
+                                        : Color(0xFFF5F6FA),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    label,
+                                    style: TextStyle(
+                                      color: selected
+                                          ? Colors.white
+                                          : Color(0xFF333333),
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        SizedBox(height: 16),
-                        _buildSheetInput(
-                          '项目编号',
-                          tempProjectNo,
-                          (v) => tempProjectNo = v,
-                        ),
-                        SizedBox(height: 12),
-                        _buildSheetInput(
-                          '项目名称',
-                          tempProjectName,
-                          (v) => tempProjectName = v,
-                        ),
-                        SizedBox(height: 12),
-                        _buildSheetInput(
-                          '负责人',
-                          tempPersonInCharge,
-                          (v) => tempPersonInCharge = v,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(height: 1),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      12,
-                      16,
-                      MediaQuery.of(context).padding.bottom + 12,
-                    ),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setSheetState(() {
-                              tempProjectNo = '';
-                              tempProjectName = '';
-                              tempPersonInCharge = '';
-                              tempOrderState = null;
-                            });
-                          },
-                          child: Container(
-                            height: 44,
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                            child: Text(
-                              '重置',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Color(0xFF333333),
-                              ),
-                            ),
+                              );
+                            }).toList(),
                           ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: GestureDetector(
+                          SizedBox(height: 16),
+                          _buildSheetInput(
+                            '项目编号',
+                            tempProjectNo,
+                            (v) => tempProjectNo = v,
+                          ),
+                          SizedBox(height: 12),
+                          _buildSheetInput(
+                            '项目名称',
+                            tempProjectName,
+                            (v) => tempProjectName = v,
+                          ),
+                          SizedBox(height: 12),
+                          _buildSheetInput(
+                            '负责人',
+                            tempPersonInCharge,
+                            (v) => tempPersonInCharge = v,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(height: 1),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        12,
+                        16,
+                        MediaQuery.of(context).padding.bottom + 12,
+                      ),
+                      child: Row(
+                        children: [
+                          GestureDetector(
                             onTap: () {
-                              _projectNoController.text = tempProjectNo;
-                              _projectNameController.text = tempProjectName;
-                              _personInChargeController.text =
-                                  tempPersonInCharge;
-                              _projectOrderState = tempOrderState;
-                              Navigator.pop(context);
-                              _loadGroupItems();
+                              setSheetState(() {
+                                tempProjectNo = '';
+                                tempProjectName = '';
+                                tempPersonInCharge = '';
+                                tempOrderState = null;
+                              });
                             },
                             child: Container(
                               height: 44,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Color(0xFF0073FF),
+                                border: Border.all(color: Colors.grey[300]!),
                                 borderRadius: BorderRadius.circular(22),
                               ),
                               child: Text(
-                                '确定',
+                                '重置',
                                 style: TextStyle(
                                   fontSize: 15,
-                                  color: Colors.white,
+                                  color: Color(0xFF333333),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                _projectNoController.text = tempProjectNo;
+                                _projectNameController.text = tempProjectName;
+                                _personInChargeController.text =
+                                    tempPersonInCharge;
+                                _projectOrderState = tempOrderState;
+                                Navigator.pop(context);
+                                _loadGroupItems();
+                              },
+                              child: Container(
+                                height: 44,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF0073FF),
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                child: Text(
+                                  '确定',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },

@@ -1262,272 +1262,279 @@ class _MessagePageState extends State<MessagePage> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setSheetState) {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.65,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-              child: Column(
-                children: [
-                  // 顶部标题栏
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey[300]!,
-                          width: 0.5,
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.65,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: Column(
+                  children: [
+                    // 顶部标题栏
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey[300]!,
+                            width: 0.5,
+                          ),
                         ),
                       ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('筛选内容', style: TextStyle(fontSize: 18)),
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: const Icon(Icons.close, size: 20),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // 筛选内容
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // 备注状态
-                          const Text(
-                            '备注状态',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 12,
-                            runSpacing: 8,
-                            children: filterOptions.map((option) {
-                              final isSelected =
-                                  selectedReadStatus == option['value'];
-                              return GestureDetector(
-                                onTap: () {
-                                  setSheetState(() {
-                                    selectedReadStatus =
-                                        option['value'] as int?;
-                                  });
-                                },
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? const Color(0xFFE6F2FF)
-                                            : Colors.grey[100],
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Text(
-                                        option['label'] as String,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: isSelected
-                                              ? const Color(0xFF0073FF)
-                                              : Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    if (isSelected)
-                                      Positioned(
-                                        child: Container(
-                                          width: 12,
-                                          height: 12,
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFF208BDE),
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(4),
-                                              bottomRight: Radius.circular(4),
-                                            ),
-                                          ),
-                                          child: const Icon(
-                                            Icons.check,
-                                            size: 12,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 24),
-                          // 订单编号
-                          const Text(
-                            '订单编号',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: billNoCtrl,
-                            decoration: InputDecoration(
-                              hintText: '请输入订单编号',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 10,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // 款号
-                          const Text(
-                            '款号',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: styleCodeCtrl,
-                            decoration: InputDecoration(
-                              hintText: '请输入款号',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 10,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // 预计完成时间
-                          const Text(
-                            '预计完成时间',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: dateCtrl,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              hintText: '请选择预计完成时间',
-                              suffixIcon: const Icon(Icons.calendar_today),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 10,
-                              ),
-                            ),
-                            onTap: () async {
-                              final picked = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2030),
-                              );
-                              if (picked != null) {
-                                final formatted =
-                                    '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
-                                dateCtrl.text = formatted;
-                              }
-                            },
+                          const Text('筛选内容', style: TextStyle(fontSize: 18)),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: const Icon(Icons.close, size: 20),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  // 底部按钮
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: Colors.grey[200]!, width: 1),
+                    // 筛选内容
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 备注状态
+                            const Text(
+                              '备注状态',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 8,
+                              children: filterOptions.map((option) {
+                                final isSelected =
+                                    selectedReadStatus == option['value'];
+                                return GestureDetector(
+                                  onTap: () {
+                                    setSheetState(() {
+                                      selectedReadStatus =
+                                          option['value'] as int?;
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? const Color(0xFFE6F2FF)
+                                              : Colors.grey[100],
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          option['label'] as String,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: isSelected
+                                                ? const Color(0xFF0073FF)
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      if (isSelected)
+                                        Positioned(
+                                          child: Container(
+                                            width: 12,
+                                            height: 12,
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFF208BDE),
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(4),
+                                                bottomRight: Radius.circular(4),
+                                              ),
+                                            ),
+                                            child: const Icon(
+                                              Icons.check,
+                                              size: 12,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(height: 24),
+                            // 订单编号
+                            const Text(
+                              '订单编号',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: billNoCtrl,
+                              decoration: InputDecoration(
+                                hintText: '请输入订单编号',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            // 款号
+                            const Text(
+                              '款号',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: styleCodeCtrl,
+                              decoration: InputDecoration(
+                                hintText: '请输入款号',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                              ),
+                            ),
+                            // const SizedBox(height: 16),
+                            // 预计完成时间
+                            // const Text(
+                            //   '预计完成时间',
+                            //   style: TextStyle(
+                            //     fontSize: 16,
+                            //     fontWeight: FontWeight.bold,
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 8),
+                            // TextField(
+                            //   controller: dateCtrl,
+                            //   readOnly: true,
+                            //   decoration: InputDecoration(
+                            //     hintText: '请选择预计完成时间',
+                            //     suffixIcon: const Icon(Icons.calendar_today),
+                            //     border: OutlineInputBorder(
+                            //       borderRadius: BorderRadius.circular(4),
+                            //     ),
+                            //     contentPadding: const EdgeInsets.symmetric(
+                            //       horizontal: 12,
+                            //       vertical: 10,
+                            //     ),
+                            //   ),
+                            //   onTap: () async {
+                            //     final picked = await showDatePicker(
+                            //       context: context,
+                            //       initialDate: DateTime.now(),
+                            //       firstDate: DateTime(2020),
+                            //       lastDate: DateTime(2030),
+                            //     );
+                            //     if (picked != null) {
+                            //       final formatted =
+                            //           '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+                            //       dateCtrl.text = formatted;
+                            //     }
+                            //   },
+                            // ),
+                          ],
+                        ),
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {
-                              setSheetState(() {
-                                selectedReadStatus = null;
-                                billNoCtrl.clear();
-                                styleCodeCtrl.clear();
-                                dateCtrl.clear();
-                              });
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Colors.grey[300]!),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                    // 底部按钮
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Colors.grey[200]!, width: 1),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                setSheetState(() {
+                                  selectedReadStatus = null;
+                                  billNoCtrl.clear();
+                                  styleCodeCtrl.clear();
+                                  dateCtrl.clear();
+                                });
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: Colors.grey[300]!),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
                               ),
-                            ),
-                            child: const Text(
-                              '清空全部',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
+                              child: const Text(
+                                '清空全部',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              _remarkController.applyFilter(
-                                readStatus: selectedReadStatus,
-                                billNo: billNoCtrl.text,
-                                styleCode: styleCodeCtrl.text,
-                                expectFinishDate: dateCtrl.text,
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0073FF),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _remarkController.applyFilter(
+                                  readStatus: selectedReadStatus,
+                                  billNo: billNoCtrl.text,
+                                  styleCode: styleCodeCtrl.text,
+                                  expectFinishDate: dateCtrl.text,
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF0073FF),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
                               ),
-                            ),
-                            child: const Text(
-                              '确定',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
+                              child: const Text(
+                                '确定',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
