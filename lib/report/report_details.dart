@@ -313,369 +313,294 @@ class _ReportDetailsState extends State<ReportDetails> {
         backgroundColor: Colors.white,
       ),
       body: Obx(
-        () => Container(
-          color: Colors.grey[50],
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // 任务信息部分
-                (_taskController.currentTask.value == null)
-                    ? CreateTask(
-                        wherePage: 'report',
-                        key: _createTaskKey,
-                        onTaskCreated: (result) {
-                          final taskId = result is int
-                              ? result
-                              : int.tryParse('$result') ?? 0;
-                          if (taskId > 0) {
-                            newTask = Task(
-                              id: taskId,
-                              taskNo: _createTaskKey.currentState?.taskNo ?? '',
-                              taskType: 3,
-                              taskTypeDesc: '',
-                              companyName: '',
-                              companyId: '',
-                              taskName: '',
-                              principalsList: [],
-                              collaboratorsList: [],
-                              ccPersonsList: [],
-                              contactPhonesList: [],
-                              contactAddressesList: [],
-                              status: '',
-                              statusDesc: '',
-                              progress: 0,
-                              reportMethod: '整体汇报',
-                            );
-                          }
-                        },
-                      )
-                    : Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        margin: const EdgeInsets.symmetric(vertical: 12.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              // ignore: deprecated_member_use
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 任务标题
-                            widget.status == 'static'
-                                ? buildTaskItem(
-                                    '任务标题',
-                                    _taskController
-                                            .currentTask
-                                            .value
-                                            ?.taskName ??
-                                        '',
-                                  )
-                                : Container(
-                                    padding: const EdgeInsets.only(top: 12.0),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          // ignore: deprecated_member_use
-                                          color: Colors.grey.withOpacity(0.2),
-                                          width: 0.5,
+        () => GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Container(
+            color: Colors.grey[50],
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: Column(
+                children: [
+                  // 任务信息部分
+                  (_taskController.currentTask.value == null)
+                      ? CreateTask(
+                          wherePage: 'report',
+                          key: _createTaskKey,
+                          onTaskCreated: (result) {
+                            final taskId = result is int
+                                ? result
+                                : int.tryParse('$result') ?? 0;
+                            if (taskId > 0) {
+                              newTask = Task(
+                                id: taskId,
+                                taskNo:
+                                    _createTaskKey.currentState?.taskNo ?? '',
+                                taskType: 3,
+                                taskTypeDesc: '',
+                                companyName: '',
+                                companyId: '',
+                                taskName: '',
+                                principalsList: [],
+                                collaboratorsList: [],
+                                ccPersonsList: [],
+                                contactPhonesList: [],
+                                contactAddressesList: [],
+                                status: '',
+                                statusDesc: '',
+                                progress: 0,
+                                reportMethod: '整体汇报',
+                              );
+                            }
+                          },
+                        )
+                      : Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          margin: const EdgeInsets.symmetric(vertical: 12.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                // ignore: deprecated_member_use
+                                color: Colors.grey.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // 任务标题
+                              widget.status == 'static'
+                                  ? buildTaskItem(
+                                      '任务标题',
+                                      _taskController
+                                              .currentTask
+                                              .value
+                                              ?.taskName ??
+                                          '',
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.only(top: 12.0),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            // ignore: deprecated_member_use
+                                            color: Colors.grey.withOpacity(0.2),
+                                            width: 0.5,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                // 左侧图标
-                                                Icon(
-                                                  Icons.assignment,
-                                                  color: Colors.grey,
-                                                  size: 16,
-                                                ),
-                                                const SizedBox(width: 8),
-                                                // 标签（带红色星号）
-                                                RichText(
-                                                  text: TextSpan(
-                                                    style: const TextStyle(
-                                                      color: Color(0xFF010101),
-                                                    ),
-                                                    children: [
-                                                      TextSpan(text: '任务标题'),
-                                                      TextSpan(
-                                                        text: '*',
-                                                        style: TextStyle(
-                                                          color: Colors.red,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  // 左侧图标
+                                                  Icon(
+                                                    Icons.assignment,
+                                                    color: Colors.grey,
+                                                    size: 16,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  // 标签（带红色星号）
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      style: const TextStyle(
+                                                        color: Color(
+                                                          0xFF010101,
                                                         ),
                                                       ),
-                                                    ],
+                                                      children: [
+                                                        TextSpan(text: '任务标题'),
+                                                        TextSpan(
+                                                          text: '*',
+                                                          style: TextStyle(
+                                                            color: Colors.red,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              // 蓝色选择按钮
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.blue,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          4,
+                                                        ),
+                                                  ),
+                                                  minimumSize: const Size(
+                                                    0,
+                                                    28,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                            // 蓝色选择按钮
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.blue,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                ),
-                                                minimumSize: const Size(0, 28),
-                                              ),
-                                              onPressed: () => {
-                                                showModalBottomSheet(
-                                                  context: context,
-                                                  isScrollControlled: true,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  builder: (cotext) {
-                                                    return SelectTaskBottom(
-                                                      onTaskSelected: (int index) {
-                                                        // 设置当前任务
-                                                        _taskController
-                                                            .setCurrentTask(
-                                                              _taskController
-                                                                  .allTasks[index],
-                                                            );
-                                                      },
-                                                    );
-                                                  },
-                                                ),
-                                              },
-                                              child: const Text(
-                                                '选择',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
+                                                onPressed: () => {
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    isScrollControlled: true,
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    builder: (cotext) {
+                                                      return SelectTaskBottom(
+                                                        onTaskSelected: (int index) {
+                                                          // 设置当前任务
+                                                          _taskController
+                                                              .setCurrentTask(
+                                                                _taskController
+                                                                    .allTasks[index],
+                                                              );
+                                                        },
+                                                      );
+                                                    },
+                                                  ),
+                                                },
+                                                child: const Text(
+                                                  '选择',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            // 任务标题文本
-                                            Text(
-                                              _taskController
-                                                      .currentTask
-                                                      .value
-                                                      ?.taskName ??
-                                                  '',
-                                              style: TextStyle(
-                                                color: Color(0xFF444444),
-                                              ),
-                                            ),
-                                            // 右侧关闭按钮
-                                            IconButton(
-                                              onPressed: () => {
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              // 任务标题文本
+                                              Text(
                                                 _taskController
-                                                    .clearCurrentTask(),
-                                                setState(() {}),
-                                              },
-                                              icon: Icon(
-                                                Icons.close,
-                                                size: 16,
-                                                color: Colors.grey,
+                                                        .currentTask
+                                                        .value
+                                                        ?.taskName ??
+                                                    '',
+                                                style: TextStyle(
+                                                  color: Color(0xFF444444),
+                                                ),
                                               ),
-                                              style: ButtonStyle(
-                                                padding:
-                                                    WidgetStateProperty.all(
-                                                      const EdgeInsets.all(0),
-                                                    ),
+                                              // 右侧关闭按钮
+                                              IconButton(
+                                                onPressed: () => {
+                                                  _taskController
+                                                      .clearCurrentTask(),
+                                                  setState(() {}),
+                                                },
+                                                icon: Icon(
+                                                  Icons.close,
+                                                  size: 16,
+                                                  color: Colors.grey,
+                                                ),
+                                                style: ButtonStyle(
+                                                  padding:
+                                                      WidgetStateProperty.all(
+                                                        const EdgeInsets.all(0),
+                                                      ),
+                                                ),
                                               ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                              // 单据编号
+                              buildTaskItem(
+                                '单据编号',
+                                _taskController.currentTask.value?.taskNo ?? '',
+                              ),
+                              // 任务类型
+                              buildTaskItem(
+                                '任务类型',
+                                _taskController
+                                        .currentTask
+                                        .value
+                                        ?.taskTypeDesc ??
+                                    '',
+                              ),
+                              buildTaskItem(
+                                '当前进度',
+                                _taskController.currentTask.value != null
+                                    ? '${_taskController.currentTask.value!.progress.toString()}%'
+                                    : '',
+                                isStatus: true,
+                              ),
+                              // 关联订单
+                              if (_taskController
+                                      .currentTask
+                                      .value
+                                      ?.relatedProjectOrder
+                                      ?.isNotEmpty ==
+                                  true)
+                                buildTaskItem(
+                                  '关联订单',
+                                  _taskController
+                                      .currentTask
+                                      .value!
+                                      .relatedProjectOrder!,
+                                  isOrder: true,
+                                ),
+                              // 任务详情按钮
+                              Center(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFEEEEEE),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    minimumSize: const Size(0, 32),
+                                  ),
+                                  onPressed: () => showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (cotext) {
+                                      final task =
+                                          _taskController.currentTask.value;
+                                      return TaskLookBottom(
+                                        taskId: task?.id ?? 0,
+                                        task: task,
+                                        isHasDetail: !const ['项目', '订单', '打样']
+                                            .any(
+                                              (t) =>
+                                                  task?.taskTypeDesc.startsWith(
+                                                    t,
+                                                  ) ==
+                                                  true,
                                             ),
-                                          ],
-                                        ),
-                                      ],
+                                      );
+                                    },
+                                  ),
+                                  child: const Text(
+                                    '任务详情',
+                                    style: TextStyle(
+                                      color: Color(0xFF333333),
+                                      fontSize: 12,
                                     ),
                                   ),
-                            // 单据编号
-                            buildTaskItem(
-                              '单据编号',
-                              _taskController.currentTask.value?.taskNo ?? '',
-                            ),
-                            // 任务类型
-                            buildTaskItem(
-                              '任务类型',
-                              _taskController.currentTask.value?.taskTypeDesc ??
-                                  '',
-                            ),
-                            buildTaskItem(
-                              '当前进度',
-                              _taskController.currentTask.value != null
-                                  ? '${_taskController.currentTask.value!.progress.toString()}%'
-                                  : '',
-                              isStatus: true,
-                            ),
-                            // 关联订单
-                            if (_taskController
-                                    .currentTask
-                                    .value
-                                    ?.relatedProjectOrder
-                                    ?.isNotEmpty ==
-                                true)
-                              buildTaskItem(
-                                '关联订单',
-                                _taskController
-                                    .currentTask
-                                    .value!
-                                    .relatedProjectOrder!,
-                                isOrder: true,
-                              ),
-                            // 任务详情按钮
-                            Center(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFEEEEEE),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  minimumSize: const Size(0, 32),
-                                ),
-                                onPressed: () => showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (cotext) {
-                                    final task =
-                                        _taskController.currentTask.value;
-                                    return TaskLookBottom(
-                                      taskId: task?.id ?? 0,
-                                      task: task,
-                                      isHasDetail: !const ['项目', '订单', '打样']
-                                          .any(
-                                            (t) =>
-                                                task?.taskTypeDesc.startsWith(
-                                                  t,
-                                                ) ==
-                                                true,
-                                          ),
-                                    );
-                                  },
-                                ),
-                                child: const Text(
-                                  '任务详情',
-                                  style: TextStyle(
-                                    color: Color(0xFF333333),
-                                    fontSize: 12,
-                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                // 汇报信息部分
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 12.0,
-                  ),
-                  margin: const EdgeInsets.only(bottom: 12.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        // ignore: deprecated_member_use
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 2,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 持续时间
-                      buildTaskItem('持续时间', _formatTimerDuration()),
-                      // 汇报进度
-                      // buildTaskItem('汇报进度', '100% → 100%', isOrder: true),
-                      ReportProgress(
-                        key: ValueKey(
-                          _taskController.currentTask.value?.id ?? 0,
-                        ),
-                        reportMethod:
-                            _taskController.currentTask.value?.reportMethod ??
-                            '整体汇报',
-                        onProgressChanged: (v) => _selectedProgress = v,
-                        onCustomDataChanged: (v) => _customReportItems = v,
-                        taskNo: _taskController.currentTask.value?.taskNo,
-                        task: _taskController.currentTask.value,
-                      ),
-                      // 汇报人
-                      buildTaskItem(
-                        '汇报人',
-                        _applicant ?? '',
-                        // onTap: () => showModalBottomSheet(
-                        //   context: context,
-                        //   isScrollControlled: true,
-                        //   backgroundColor: Colors.transparent,
-                        //   builder: (cotext) {
-                        //     return SelectPrincipal(
-                        //       '汇报人',
-                        //       onConfirm: (selectedPersons) {
-                        //         setState(() {
-                        //           _selectedPersons = selectedPersons;
-                        //         });
-                        //       },
-                        //     );
-                        //   },
-                        // ),
-                      ),
-                      // 汇报人标签
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          ..._selectedPersons.map(
-                            (person) => buildUserTag(person),
+                            ],
                           ),
-                        ],
-                      ),
-                      Container(
-                        // ignore: deprecated_member_use
-                        color: Colors.grey.withOpacity(0.2),
-                        height: 0.5,
-                        margin: _selectedPersons.isNotEmpty
-                            ? const EdgeInsets.only(top: 8)
-                            : EdgeInsets.zero,
-                      ),
-                      ReportRemarkSection(
-                        controller: _remarkController,
-                        readOnly: widget.status == 'static',
-                        maxLines: null,
-                        minLines: 2,
-                      ),
-                      if (widget.status != 'static')
-                        ReportExpectedCompletionSection(
-                          onChanged: (v) => _expectedCompletionDate = v,
                         ),
-                    ],
-                  ),
-                ),
 
-                // 图片/视频 & 附件
-                if (widget.status != 'static')
+                  // 汇报信息部分
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0,
+                      vertical: 12.0,
+                    ),
                     margin: const EdgeInsets.only(bottom: 12.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
                           // ignore: deprecated_member_use
@@ -687,50 +612,141 @@ class _ReportDetailsState extends State<ReportDetails> {
                       ],
                     ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ReportMediaSection(
-                          onMediaChanged: (ids) => _mediaIds = ids,
-                          onUploadingChanged: (v) => _isMediaUploading = v,
+                        // 持续时间
+                        buildTaskItem('持续时间', _formatTimerDuration()),
+                        // 汇报进度
+                        // buildTaskItem('汇报进度', '100% → 100%', isOrder: true),
+                        ReportProgress(
+                          key: ValueKey(
+                            _taskController.currentTask.value?.id ?? 0,
+                          ),
+                          reportMethod:
+                              _taskController.currentTask.value?.reportMethod ??
+                              '整体汇报',
+                          onProgressChanged: (v) => _selectedProgress = v,
+                          onCustomDataChanged: (v) => _customReportItems = v,
+                          taskNo: _taskController.currentTask.value?.taskNo,
+                          task: _taskController.currentTask.value,
                         ),
-                        ReportAttachmentSection(
-                          onAttachmentChanged: (ids) => _attachmentIds = ids,
-                          onUploadingChanged: (v) => _isAttachmentUploading = v,
+                        // 汇报人
+                        buildTaskItem(
+                          '汇报人',
+                          _applicant ?? '',
+                          // onTap: () => showModalBottomSheet(
+                          //   context: context,
+                          //   isScrollControlled: true,
+                          //   backgroundColor: Colors.transparent,
+                          //   builder: (cotext) {
+                          //     return SelectPrincipal(
+                          //       '汇报人',
+                          //       onConfirm: (selectedPersons) {
+                          //         setState(() {
+                          //           _selectedPersons = selectedPersons;
+                          //         });
+                          //       },
+                          //     );
+                          //   },
+                          // ),
                         ),
+                        // 汇报人标签
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            ..._selectedPersons.map(
+                              (person) => buildUserTag(person),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          // ignore: deprecated_member_use
+                          color: Colors.grey.withOpacity(0.2),
+                          height: 0.5,
+                          margin: _selectedPersons.isNotEmpty
+                              ? const EdgeInsets.only(top: 8)
+                              : EdgeInsets.zero,
+                        ),
+                        ReportRemarkSection(
+                          controller: _remarkController,
+                          readOnly: widget.status == 'static',
+                          maxLines: null,
+                          minLines: 2,
+                        ),
+                        if (widget.status != 'static')
+                          ReportExpectedCompletionSection(
+                            onChanged: (v) => _expectedCompletionDate = v,
+                          ),
                       ],
                     ),
                   ),
 
-                // 底部信息部分
-                ?widget.status == 'static'
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        margin: const EdgeInsets.only(bottom: 12.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              // ignore: deprecated_member_use
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 汇报类型
-                            buildTaskItem('汇报类型', '正常', isStatus: true),
-                            // 提交人
-                            buildTaskItem('提交人', '陈圆圆'),
-                            // 汇报时间
-                            buildTaskItem('汇报时间', '11-02 06: 00: 31'),
-                          ],
-                        ),
-                      )
-                    : null,
-              ],
+                  // 图片/视频 & 附件
+                  if (widget.status != 'static')
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      margin: const EdgeInsets.only(bottom: 12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            // ignore: deprecated_member_use
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          ReportMediaSection(
+                            onMediaChanged: (ids) => _mediaIds = ids,
+                            onUploadingChanged: (v) => _isMediaUploading = v,
+                          ),
+                          ReportAttachmentSection(
+                            onAttachmentChanged: (ids) => _attachmentIds = ids,
+                            onUploadingChanged: (v) =>
+                                _isAttachmentUploading = v,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // 底部信息部分
+                  ?widget.status == 'static'
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          margin: const EdgeInsets.only(bottom: 12.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                // ignore: deprecated_member_use
+                                color: Colors.grey.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // 汇报类型
+                              buildTaskItem('汇报类型', '正常', isStatus: true),
+                              // 提交人
+                              buildTaskItem('提交人', '陈圆圆'),
+                              // 汇报时间
+                              buildTaskItem('汇报时间', '11-02 06: 00: 31'),
+                            ],
+                          ),
+                        )
+                      : null,
+                ],
+              ),
             ),
           ),
         ),

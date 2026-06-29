@@ -955,19 +955,25 @@ class _ReportFormState extends State<ReportForm> {
   Widget build(BuildContext context) {
     final task = _task;
 
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          Common.topBar(context, '补汇报'),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            children: [
+              Common.topBar(context, '补汇报'),
           Container(height: 0.5, color: Colors.grey[300]!),
           Expanded(
             child: Padding(
@@ -1142,6 +1148,6 @@ class _ReportFormState extends State<ReportForm> {
           ),
         ],
       ),
-    );
+    )));
   }
 }

@@ -36,6 +36,7 @@ class MessageController extends GetxController {
   Future<void> fetchMessages(String category, {int current = 1}) async {
     currentCategory.value = category;
     if (current == 1) {
+      messageList.value = [];
       isLoadingMessages.value = true;
     }
     try {
